@@ -156,9 +156,14 @@ npx token2022-guard ./examples/vulnerable_hook.rs --json`}</pre>
             Full proposal: docs/GRANT.md.
           </p>
         </div>
-        <Link href="/milestones" className="btn btn-ghost">
-          M1 &amp; M2 details ↗
-        </Link>
+        <a
+          href={`${SITE.github}/blob/main/docs/GRANT.md`}
+          className="btn btn-ghost"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Grant proposal ↗
+        </a>
       </section>
 
       <section className="callout callout-info">

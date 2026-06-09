@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.3 — Grant submission ready (continued)
+
+- Remove public `/milestones` page; milestones live in grant form + docs/GRANT.md only
+
 ## v0.2.3 — Grant submission ready
 
 - Full UI redesign (audit workbook aesthetic, golden accent, ledger findings)
