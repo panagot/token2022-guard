@@ -262,7 +262,7 @@ See [ROADMAP.md](./ROADMAP.md) for the full plan. Highlights:
 - `npx token2022-guard` on npm
 - Secure transfer-hook template + Mollusk/LiteSVM test harness
 
-**v0.2.3:** 26 checks, 60 tests, 4 web samples, SARIF CI, grant reviewer path at [/reviewer](https://token2022-guard.vercel.app/reviewer).
+**v0.2.3:** 26 checks, 60 tests, 4 web samples, SARIF CI, product overview at [/reviewer](https://token2022-guard.vercel.app/reviewer).
 
 ---
 

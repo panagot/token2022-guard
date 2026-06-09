@@ -79,7 +79,7 @@ Each shipped check has: vulnerable + secure fixtures, unit tests (fire + pass), 
 - **Marketplace** publish (`.vsix` release)
 - Neovim / LSP server (reuse the same engine over a thin LSP layer)
 
-## Test harness & templates (grant M2)
+## Test harness & templates (phase 2)
 
 - **Secure transfer-hook template** repo devs can clone (`create-t22-hook`)
 - **Mollusk / LiteSVM harness** proving each guard actually blocks the matching exploit

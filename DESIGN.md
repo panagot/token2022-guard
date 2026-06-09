@@ -13,7 +13,7 @@ findings. The opposite of the dark crypto-dashboard reflex.
 
 ## Theme: warm paper (light)
 
-Chosen on purpose. Grant reviewers read long-form prose; developers read code.
+Chosen on purpose. Long-form prose for product context; monospace for code and findings.
 A document-grade light UI is more legible for reading, and code stays on dark
 surfaces (GitHub / Stripe docs convention). It also differentiates instantly from
 every dark Solana tool.

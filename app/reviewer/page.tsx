@@ -7,7 +7,7 @@ import { SITE } from "@/lib/site";
 
 export const metadata = {
   title: "Overview",
-  description: "2-minute overview of Token2022 Guard for grant reviewers.",
+  description: "2-minute product overview of Token2022 Guard.",
 };
 
 const PROOF = [
@@ -50,7 +50,7 @@ const PROOF = [
 const SHIPPED = [
   `${CHECKS.length} checks (T22-001 → T22-026)`,
   "60 unit tests + 6 integration examples",
-  "npm package ready (`npm run smoke`); publish at apply",
+  "npm package ready (`npm run smoke`); publish pending",
   "CLI output: JSON / SARIF / Markdown",
   "GitHub Action + VS Code prototype",
   "BENCHMARK.md, 4 specimens, 9 guides, 9 use cases",
@@ -148,29 +148,12 @@ npx token2022-guard ./examples/vulnerable_hook.rs --json`}</pre>
         </ul>
       </section>
 
-      <section className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-7">
-        <div className="max-w-md">
-          <p className="eyebrow mb-2">Grant · $3,000</p>
-          <p className="text-sm text-[var(--ink-muted)]">
-            M1 proof chain ready; npm publish is the last pre-apply step. M2 planned if approved.
-          </p>
-        </div>
-        <a
-          href={`${SITE.github}/blob/main/docs/GRANT.md`}
-          className="btn btn-ghost"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Grant proposal ↗
-        </a>
-      </section>
-
       <section className="callout callout-info">
         <p className="display mb-1.5 text-[15px] text-[var(--ink)]">
           Not a duplicate of Anchor Security Prep
         </p>
         <p className="text-[14px] leading-relaxed text-[var(--ink-muted)]">
-          ASP performs general Anchor static analysis (26 rules, a separate global grant).
+          ASP performs general Anchor static analysis (26 rules, separate repo).
           Token2022 Guard covers Token-2022 extension integration safety only — separate repo,
           separate scope.{" "}
           <a

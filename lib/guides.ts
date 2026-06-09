@@ -69,7 +69,7 @@ export const GUIDES: Guide[] = [
     category: "workflow",
     title: "Gate PRs with Token2022 Guard + SARIF",
     summary:
-      "Set up the GitHub Action, grant security-events write for SARIF upload, fail builds on high and critical with --fail-on, and scope noisy runs with --only and --except.",
+      "Set up the GitHub Action, give the workflow security-events write for SARIF upload, fail builds on high and critical with --fail-on, and scope noisy runs with --only and --except.",
     readMinutes: 8,
   },
   {

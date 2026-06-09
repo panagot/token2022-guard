@@ -23,8 +23,9 @@ yarn-error.log*
 # env files
 .env*
 
-# grant application drafts (local only — paste into Superteam form)
+# local-only docs (not for public repo)
 docs/APPLICATION.md
+docs/GRANT.md
 
 # typescript
 *.tsbuildinfo

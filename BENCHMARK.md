@@ -66,7 +66,7 @@ CI runs `npm test` before the example scan (see `.github/workflows/token2022-gua
 ## Known limitations
 
 1. **Regex heuristics** — pattern-based, not AST. Novel refactorings may evade checks.
-2. **T22-022 / T22-026** — fire on any `token::transfer` without guards; tune with `--except` until M2 config.
+2. **T22-022 / T22-026** — fire on any `token::transfer` without guards; tune with `--except` until config files ship.
 3. **T22-025** — now code-aware (comments mentioning `reload` no longer suppress the check).
 4. **External corpus** — minimal snippets from audit patterns, not full cloned repos.
 
