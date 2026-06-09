@@ -54,7 +54,7 @@ findings, then **Secure transfer hook** to see them clear (0 high/critical).
 # After clone
 npm run scan -- ./examples
 
-# After npm publish (no clone) — v0.2.1+
+# After npm publish (no clone) — v0.2.3+
 npx token2022-guard ./programs --fail-on=high
 
 # Verify package locally before publish
@@ -211,7 +211,7 @@ See [ROADMAP.md](./ROADMAP.md):
 - VS Code quick-fixes and Marketplace publish
 - Secure transfer-hook template + Mollusk/LiteSVM test harness
 
-**Shipped in v0.2.1:** 26 checks, 60 tests, `npm run smoke`, extensions example, slim npm package. Publish: `npm publish --access public`.
+**Shipped in v0.2.3:** 26 checks, 60 tests, `npm run smoke`, 4 web samples, grant reviewer path. Publish: `npm login` then `npm publish --access public`. Grant apply: [docs/APPLICATION.md](docs/APPLICATION.md).
 Grant reviewer walkthrough: [token2022-guard.vercel.app/reviewer](https://token2022-guard.vercel.app/reviewer).
 
 ---

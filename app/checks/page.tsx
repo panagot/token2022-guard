@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { PageHeader } from "@/components/PageHeader";
+import { SectionHead } from "@/components/SectionHead";
 import { CHECK_GUIDE } from "@/lib/check-guides";
 import { CHECKS } from "@/lib/checks";
 import { GUIDES } from "@/lib/guides";
@@ -12,79 +13,101 @@ export const metadata = {
 
 const GUIDE_TITLE = Object.fromEntries(GUIDES.map((g) => [g.slug, g.title]));
 
+const SEV_INDEX: Record<string, string> = {
+  critical: "01",
+  high: "02",
+  medium: "03",
+  low: "04",
+};
+
 export default function ChecksPage() {
   const bySeverity = ["critical", "high", "medium", "low"] as const;
 
   return (
     <div className="space-y-12">
       <PageHeader
-        eyebrow="Checks"
-        title="Check catalog"
-        subtitle={`${CHECKS.length} static checks for Token-2022 integration footguns. Each includes a fix hint, related guide, and link to the official extensions spec.`}
-        actions={
-          <Link href="/" className="btn btn-primary text-[10px]">
-            Run checks
-          </Link>
-        }
+        eyebrow="Reference"
+        title="The check catalog"
+        subtitle={`${CHECKS.length} static checks for Token-2022 integration footguns. Each row carries a one-line remediation and a link to the official extensions specification.`}
       />
 
       {bySeverity.map((sev) => {
         const items = CHECKS.filter((c) => c.severity === sev);
         if (items.length === 0) return null;
         return (
-          <section key={sev} className="space-y-4">
-            <h2 className={`label sev-${sev}`}>{sev}</h2>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {items.map((c) => {
-                const extra = CHECK_GUIDE[c.id];
-                return (
-                  <div key={c.id} className={`panel sev-${c.severity}`}>
-                    <div className="panel-inner space-y-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-xs text-[var(--accent)]">{c.id}</span>
-                        <span className={`badge sev-${c.severity}`}>{c.severity}</span>
-                      </div>
-                      <h3 className="text-sm font-semibold">{c.title}</h3>
-                      <p className="text-xs leading-relaxed text-[var(--ink-muted)]">{c.summary}</p>
-                      {extra?.fix && (
-                        <p className="text-xs leading-relaxed">
-                          <span className="label text-[var(--accent-2)]">Fix</span>{" "}
-                          <span className="text-[var(--ink)]">{extra.fix}</span>
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-3 pt-1">
-                        {extra?.guide && (
-                          <Link href={`/guides/${extra.guide}`} className="nav-link text-[10px]">
-                            {GUIDE_TITLE[extra.guide] ?? extra.guide} →
-                          </Link>
-                        )}
-                        <a
-                          href={c.reference}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="nav-link text-[10px]"
-                        >
-                          Spec →
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+          <section key={sev} className="space-y-3.5">
+            <SectionHead
+              index={SEV_INDEX[sev]}
+              label={`${sev} · ${items.length}`}
+            />
+            <div className="ledger">
+              <table className="ledger-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: "1.4rem" }} aria-label="Severity" />
+                    <th style={{ width: "5.2rem" }}>ID</th>
+                    <th>Check &amp; remediation</th>
+                    <th style={{ width: "8.5rem" }}>Guide</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((c) => {
+                    const extra = CHECK_GUIDE[c.id];
+                    return (
+                      <tr key={c.id} className={`sev-${c.severity}`}>
+                        <td>
+                          <span className="dot" title={c.severity} />
+                        </td>
+                        <td className="cell-id">{c.id}</td>
+                        <td>
+                          <p className="font-medium text-[var(--ink)]">{c.title}</p>
+                          <p className="mt-1 text-[13.5px] leading-relaxed text-[var(--ink-muted)]">
+                            {c.summary}
+                          </p>
+                          {extra?.fix && (
+                            <p className="fix-inset">
+                              <span className="fix-inset__label">Fix</span>
+                              {extra.fix}
+                            </p>
+                          )}
+                          <a
+                            href={c.reference}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="nav-link-inline mono mt-2 inline-block text-xs"
+                          >
+                            Specification ↗
+                          </a>
+                        </td>
+                        <td>
+                          {extra?.guide ? (
+                            <Link
+                              href={`/guides/${extra.guide}`}
+                              className="nav-link-inline text-[13px]"
+                            >
+                              {GUIDE_TITLE[extra.guide] ?? extra.guide}
+                            </Link>
+                          ) : (
+                            <span className="text-xs text-[var(--ink-faint)]">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </section>
         );
       })}
 
-      <section className="panel">
-        <div className="panel-inner flex flex-wrap items-center justify-between gap-4">
-          <p className="text-sm text-[var(--ink-muted)]">
-            26 checks shipped (T22-001 → T22-026). Expansion toward 30+ on the roadmap.
-          </p>
-          <Link href="/guides" className="btn btn-ghost text-[10px]">
-            All guides →
-          </Link>
-        </div>
+      <section className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-7">
+        <p className="text-sm text-[var(--ink-muted)]">
+          {CHECKS.length} checks shipped. Expansion toward 30+ is on the roadmap.
+        </p>
+        <Link href="/guides" className="btn btn-ghost">
+          All guides ↗
+        </Link>
       </section>
     </div>
   );

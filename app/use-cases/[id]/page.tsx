@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/PageHeader";
+import { SectionHead } from "@/components/SectionHead";
 import { USE_CASE_CONTENT } from "@/lib/use-case-content";
 import { USE_CASE_BY_ID, USE_CASE_CATEGORIES, USE_CASES } from "@/lib/use-cases";
 
@@ -24,56 +25,55 @@ export default async function UseCaseDetailPage({ params }: { params: Promise<{ 
   if (!uc || !detail) notFound();
 
   return (
-    <article className="space-y-10">
+    <article className="space-y-14">
       <PageHeader
         eyebrow={USE_CASE_CATEGORIES[uc.category]}
         title={uc.title}
         subtitle={uc.summary}
         actions={
           <>
-            <Link href={uc.tryHref} className="btn btn-primary text-[10px]">
+            <Link href={uc.tryHref} className="btn btn-primary">
               {uc.tryLabel}
             </Link>
-            <Link href="/use-cases" className="btn btn-ghost text-[10px]">
+            <Link href="/use-cases" className="btn btn-ghost">
               All use cases
             </Link>
           </>
         }
       />
 
-      <div className="max-w-2xl space-y-8">
-        <section className="panel">
-          <div className="panel-inner space-y-2">
-            <p className="label text-[var(--accent)]">The problem</p>
-            <p className="text-sm leading-relaxed text-[var(--ink-muted)]">{detail.problem}</p>
-            <p className="text-xs text-[var(--ink-faint)]">
-              <span className="label">Audience</span> — {detail.audience}
-            </p>
-          </div>
+      <div className="max-w-2xl space-y-14">
+        <section className="space-y-3">
+          <SectionHead index="01" label="The problem" />
+          <p className="prose-body">{detail.problem}</p>
+          <p className="text-[13px] text-[var(--ink-faint)]">
+            <span className="eyebrow">Audience</span> — {detail.audience}
+          </p>
         </section>
 
         <section className="space-y-3">
-          <h2 className="display text-lg font-bold">When to run this pass</h2>
-          <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
+          <SectionHead index="02" label="When to run this pass" />
+          <ul className="space-y-2.5">
             {detail.when.map((w) => (
-              <li key={w} className="flex gap-2">
-                <span className="text-[var(--accent)]">·</span>
+              <li key={w} className="flex gap-2.5 text-[14.5px] leading-relaxed text-[var(--ink-muted)]">
+                <span className="mono shrink-0 text-xs text-[var(--accent-ink)]">›</span>
                 <span>{w}</span>
               </li>
             ))}
           </ul>
         </section>
 
-        <section className="space-y-4">
-          <h2 className="display text-lg font-bold">Workflow</h2>
-          <ol className="space-y-4">
+        <section className="space-y-3">
+          <SectionHead index="03" label="Workflow" />
+          <ol className="divide-y divide-[var(--line-soft)] border-y border-[var(--line-soft)]">
             {detail.workflow.map((w, i) => (
-              <li key={w.step} className="panel">
-                <div className="panel-inner space-y-2">
-                  <p className="font-mono text-xs text-[var(--accent)]">
-                    {String(i + 1).padStart(2, "0")} — {w.step}
-                  </p>
-                  <p className="text-sm leading-relaxed text-[var(--ink-muted)]">{w.detail}</p>
+              <li key={w.step} className="flex gap-5 py-4">
+                <span className="mono shrink-0 text-xs text-[var(--accent-ink)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="space-y-1">
+                  <p className="font-medium text-[var(--ink)]">{w.step}</p>
+                  <p className="text-[14px] leading-relaxed text-[var(--ink-muted)]">{w.detail}</p>
                 </div>
               </li>
             ))}
@@ -81,26 +81,26 @@ export default async function UseCaseDetailPage({ params }: { params: Promise<{ 
         </section>
 
         <section className="space-y-3">
-          <h2 className="display text-lg font-bold">What Token2022 Guard catches</h2>
-          <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
+          <SectionHead index="04" label="What the review catches" />
+          <ul className="space-y-2.5">
             {detail.whatWeCatch.map((w) => (
-              <li key={w} className="flex gap-2">
-                <span className="text-[var(--accent-2)]">✓</span>
+              <li key={w} className="flex gap-2.5 text-[14.5px] leading-relaxed text-[var(--ink-muted)]">
+                <span className="mono shrink-0 text-xs text-[var(--ok)]">✓</span>
                 <span>{w}</span>
               </li>
             ))}
           </ul>
-          <p className="font-mono text-[10px] text-[var(--ink-faint)]">
-            Primary checks: {uc.checks.join(", ")}
+          <p className="mono text-[11px] text-[var(--ink-faint)]">
+            Primary checks: {uc.checks.join("  ·  ")}
           </p>
         </section>
 
         <section className="space-y-3">
-          <h2 className="display text-lg font-bold">Common mistakes</h2>
-          <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
+          <SectionHead index="05" label="Common mistakes" />
+          <ul className="space-y-2.5">
             {detail.avoid.map((a) => (
-              <li key={a} className="flex gap-2">
-                <span className="text-[var(--high)]">×</span>
+              <li key={a} className="flex gap-2.5 text-[14.5px] leading-relaxed text-[var(--ink-muted)]">
+                <span className="mono shrink-0 text-xs text-[var(--critical)]">✕</span>
                 <span>{a}</span>
               </li>
             ))}
@@ -108,22 +108,19 @@ export default async function UseCaseDetailPage({ params }: { params: Promise<{ 
         </section>
 
         <section className="space-y-3">
-          <h2 className="label">Related guides</h2>
-          <div className="grid gap-2">
+          <SectionHead index="06" label="Related guides" />
+          <div className="link-list">
             {detail.relatedGuides.map((g) => (
-              <Link
-                key={g.slug}
-                href={`/guides/${g.slug}`}
-                className="panel block hover:border-[var(--accent)]/40"
-              >
-                <div className="panel-inner text-sm font-semibold">{g.title} →</div>
+              <Link key={g.slug} href={`/guides/${g.slug}`} className="link-row flex items-center justify-between gap-3">
+                <span className="text-[14px] font-medium text-[var(--ink)]">{g.title}</span>
+                <span className="mono text-xs text-[var(--accent-ink)]">↗</span>
               </Link>
             ))}
           </div>
         </section>
       </div>
 
-      <Link href="/use-cases" className="nav-link">
+      <Link href="/use-cases" className="nav-link-inline mono text-sm">
         ← All use cases
       </Link>
     </article>

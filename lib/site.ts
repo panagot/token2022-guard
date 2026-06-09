@@ -6,7 +6,7 @@ export const SITE = {
   actions:
     "https://github.com/panagot/token2022-guard/actions/workflows/token2022-guard.yml",
   spec: "https://spl.solana.com/token-2022/extensions",
-  version: "v0.2.2",
+  version: "v0.2.3",
 } as const;
 
 export const NAV_LINKS = [

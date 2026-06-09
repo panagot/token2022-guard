@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.3 — Grant submission ready
+
+- Full UI redesign (audit workbook aesthetic, golden accent, ledger findings)
+- Deeper guides and use-case content (9 + 9)
+- Honest M1 milestones (npm smoke-tested; publish listed as remaining)
+- docs/APPLICATION.md for Superteam Balkan form
+- Responsive layout (1440px), editor scroll fixes, DESIGN.md
+
 ## v0.2.2 — M1 grant polish
 
 - Fix CI SARIF (tsx direct output; CodeQL v4; Node 22)

@@ -26,66 +26,70 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const meta = GUIDES.find((g) => g.slug === slug);
 
   return (
-    <article className="space-y-10">
+    <article className="space-y-12">
       <PageHeader
-        eyebrow={meta ? `${meta.readMinutes} min read` : "Guide"}
+        eyebrow={meta ? `Guide · ${meta.readMinutes} min read` : "Guide"}
         title={guide.title}
         subtitle={guide.summary}
         actions={
-          <Link href={guide.ctaHref} className="btn btn-primary text-[10px]">
+          <Link href={guide.ctaHref} className="btn btn-primary">
             {guide.ctaLabel}
           </Link>
         }
       />
 
-      <div className="max-w-2xl space-y-8">
+      <div className="max-w-[68ch] space-y-9">
         {guide.sections.map((section, i) => (
-          <section key={i} className="space-y-3">
+          <section key={i} className="space-y-3.5">
             {section.heading && (
-              <h2 className="display text-lg font-bold">{section.heading}</h2>
+              <h2 className="display text-[1.4rem] text-[var(--ink)]">{section.heading}</h2>
             )}
             {section.paragraphs?.map((p, j) => (
-              <p key={j} className="text-sm leading-relaxed text-[var(--ink-muted)]">
+              <p key={j} className="prose-body">
                 <GuideText text={p} />
               </p>
             ))}
             {section.bullets && (
-              <ul className="list-inside list-disc space-y-2 text-sm text-[var(--ink-muted)]">
+              <ul className="space-y-2.5">
                 {section.bullets.map((b, k) => (
-                  <li key={k}>
-                    <GuideText text={b} />
+                  <li key={k} className="flex gap-2.5 prose-body">
+                    <span className="mono shrink-0 text-xs text-[var(--accent-ink)]">›</span>
+                    <span>
+                      <GuideText text={b} />
+                    </span>
                   </li>
                 ))}
               </ul>
             )}
             {section.numbered && (
-              <ol className="list-inside list-decimal space-y-2 text-sm text-[var(--ink-muted)]">
+              <ol className="space-y-2.5">
                 {section.numbered.map((n, k) => (
-                  <li key={k} className="pl-1">
-                    <GuideText text={n} />
+                  <li key={k} className="flex gap-3 prose-body">
+                    <span className="mono shrink-0 text-xs text-[var(--accent-ink)]">
+                      {String(k + 1).padStart(2, "0")}
+                    </span>
+                    <span>
+                      <GuideText text={n} />
+                    </span>
                   </li>
                 ))}
               </ol>
             )}
             {section.code && (
-              <pre className="code-block overflow-x-auto px-4 py-3 text-xs leading-relaxed">
+              <pre className="code-block overflow-x-auto px-4 py-3.5 text-[12.5px] leading-relaxed">
                 {section.code}
               </pre>
             )}
             {section.callout && (
               <div
-                className={`panel border-l-2 ${
-                  section.callout.type === "warn"
-                    ? "border-[var(--high)]"
-                    : "border-[var(--accent)]"
+                className={`callout ${
+                  section.callout.type === "warn" ? "callout-warn" : "callout-info"
                 }`}
               >
-                <div className="panel-inner text-sm leading-relaxed text-[var(--ink-muted)]">
-                  <span className="label mr-2">
-                    {section.callout.type === "warn" ? "Warning" : "Tip"}
-                  </span>
-                  {section.callout.text}
-                </div>
+                <span className="callout__label">
+                  {section.callout.type === "warn" ? "Warning" : "Note"}
+                </span>
+                <GuideText text={section.callout.text} />
               </div>
             )}
           </section>
@@ -93,25 +97,23 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       </div>
 
       {guide.relatedChecks.length > 0 && (
-        <div className="panel">
-          <div className="panel-inner space-y-2">
-            <p className="label">Related checks</p>
-            <p className="font-mono text-xs text-[var(--accent)]">
-              {guide.relatedChecks.join(" · ")}
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Link href="/checks" className="btn btn-ghost text-[10px]">
-                Full catalog →
-              </Link>
-              <Link href="/use-cases" className="btn btn-ghost text-[10px]">
-                Use cases →
-              </Link>
-            </div>
+        <section className="max-w-[68ch] space-y-3 border-t border-[var(--line)] pt-7">
+          <p className="eyebrow">Related checks</p>
+          <p className="mono text-[13px] text-[var(--ink-muted)]">
+            {guide.relatedChecks.join("  ·  ")}
+          </p>
+          <div className="flex flex-wrap gap-2 pt-1">
+            <Link href="/checks" className="btn btn-ghost">
+              Full catalog ↗
+            </Link>
+            <Link href="/use-cases" className="btn btn-ghost">
+              Use cases ↗
+            </Link>
           </div>
-        </div>
+        </section>
       )}
 
-      <Link href="/guides" className="nav-link">
+      <Link href="/guides" className="nav-link-inline mono text-sm">
         ← All guides
       </Link>
     </article>

@@ -1,7 +1,7 @@
 # Token2022 Guard — Benchmark
 
 **Generated:** 2026-06-09  
-**Engine:** v0.2.1 · 26 checks  
+**Engine:** v0.2.3 · 26 checks  
 **Command:** `npm run benchmark` → writes `benchmark/results.json`
 
 This benchmark measures **detection on intentional bad patterns** and **false positives on secure

@@ -1,20 +1,26 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Syne } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import "./globals.css";
 
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -31,24 +37,22 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://token2022-guard.vercel.app",
   },
-  icons: {
-    icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/icon.svg", sizes: "32x32" },
-    ],
-    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
-    shortcut: ["/icon.svg"],
-  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${syne.variable} ${ibmPlexMono.variable} antialiased`}>
-        <a href="#main-content" className="skip-link">Skip to content</a>
+      <body
+        className={`${fraunces.variable} ${plexSans.variable} ${plexMono.variable} antialiased`}
+      >
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <div className="app-shell">
           <Navbar />
-          <main id="main-content" className="mx-auto max-w-6xl px-6 py-10">{children}</main>
+          <main id="main-content" className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-8 sm:px-6 md:px-10 md:py-14 xl:px-14">
+            {children}
+          </main>
           <Footer />
         </div>
       </body>

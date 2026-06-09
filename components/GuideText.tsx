@@ -9,7 +9,7 @@ export function GuideText({ text }: { text: string }) {
     <>
       {parts.map((part, i) =>
         part.startsWith("/") ? (
-          <Link key={i} href={part} className="nav-link">
+          <Link key={i} href={part} className="nav-link-inline mono text-[0.95em]">
             {part}
           </Link>
         ) : (

@@ -1,23 +1,43 @@
 import Link from "next/link";
 
 import { PageHeader } from "@/components/PageHeader";
+import { SectionHead } from "@/components/SectionHead";
 import { CHECKS } from "@/lib/checks";
 
 const STEPS = [
   {
     n: "01",
     title: "Scope",
-    body: "Point Token2022 Guard at your Anchor / Rust source — a file, a programs/ directory, or paste into the web UI. The engine detects transfer-hook programs and custodial flows automatically.",
+    body: "Point Token2022 Guard at your Anchor or Rust source — a file, a programs/ directory, or pasted into the web UI. The engine detects transfer-hook programs and custodial flows automatically.",
   },
   {
     n: "02",
     title: "Scan",
-    body: `${CHECKS.length} static checks run against your source. Each finding includes severity, confidence, the offending line when detectable, a fix, and a spec reference.`,
+    body: `${CHECKS.length} static checks run against your source. Each finding carries a severity, a confidence, the offending line when detectable, a remediation, and a specification reference.`,
   },
   {
     n: "03",
     title: "Fix & gate",
-    body: "Patch the flagged patterns, re-run until high/critical clear, then wire --fail-on=high in CI so regressions never reach mainnet.",
+    body: "Patch the flagged patterns, re-run until high and critical clear, then wire --fail-on=high into CI so regressions never reach mainnet.",
+  },
+];
+
+const SURFACES = [
+  { title: "Web UI", desc: "Paste source or load specimens for instant findings.", href: "/" },
+  {
+    title: "CLI",
+    desc: "npm run scan — JSON, SARIF, Markdown, and CI exit codes.",
+    href: "/guides/cli-quickstart",
+  },
+  {
+    title: "VS Code",
+    desc: "Inline diagnostics on .rs files (extension prototype).",
+    href: "https://github.com/panagot/token2022-guard/tree/main/vscode-extension",
+  },
+  {
+    title: "GitHub Action",
+    desc: "Fail pull requests on high or critical, with SARIF upload.",
+    href: "/guides/ci-setup",
   },
 ];
 
@@ -28,61 +48,56 @@ export const metadata = {
 
 export default function HowItWorksPage() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-14">
       <PageHeader
-        eyebrow="Product"
-        title="How Token2022 Guard works"
-        subtitle="Three steps — scope your program, run checks, fix and gate in CI. Same engine in the browser, terminal, VS Code, and GitHub Actions."
-        actions={
-          <Link href="/" className="btn btn-primary text-[10px]">
-            Run checks
-          </Link>
-        }
+        eyebrow="Method"
+        title="How the review works"
+        subtitle="Three steps — scope the program, run the checks, fix and gate in CI. The same engine runs in the browser, the terminal, VS Code, and GitHub Actions."
       />
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {STEPS.map((s) => (
-          <div key={s.n} className="panel">
-            <div className="panel-inner space-y-3">
-              <p className="font-mono text-2xl font-bold text-[var(--accent)]">{s.n}</p>
-              <h2 className="display text-xl font-bold">{s.title}</h2>
-              <p className="text-sm leading-relaxed text-[var(--ink-muted)]">{s.body}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <section className="space-y-4">
-        <h2 className="label">Surfaces</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[
-            { title: "Web UI", desc: "Paste source or load samples — instant findings.", href: "/" },
-            { title: "CLI", desc: "npm run scan — JSON, SARIF, Markdown, CI exit codes.", href: "/guides/cli-quickstart" },
-            { title: "VS Code", desc: "Inline diagnostics on .rs files (extension prototype).", href: "https://github.com/panagot/token2022-guard/tree/main/vscode-extension" },
-            { title: "GitHub Action", desc: "Fail PRs on high/critical + SARIF upload.", href: "/guides/ci-setup" },
-          ].map((item) => (
-            <Link key={item.title} href={item.href} className="panel block hover:border-[var(--accent)]/40">
-              <div className="panel-inner">
-                <h3 className="text-sm font-semibold">{item.title}</h3>
-                <p className="mt-1 text-xs text-[var(--ink-muted)]">{item.desc}</p>
+      <section className="space-y-3">
+        <SectionHead index="01" label="The procedure" />
+        <ol className="divide-y divide-[var(--line-soft)] border-y border-[var(--line-soft)]">
+          {STEPS.map((s) => (
+            <li key={s.n} className="flex gap-6 py-6">
+              <span className="mono shrink-0 text-sm text-[var(--accent-ink)]">{s.n}</span>
+              <div className="space-y-1.5">
+                <h2 className="display text-[1.25rem] text-[var(--ink)]">{s.title}</h2>
+                <p className="max-w-2xl text-[14.5px] leading-relaxed text-[var(--ink-muted)]">
+                  {s.body}
+                </p>
               </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="space-y-3">
+        <SectionHead index="02" label="Four surfaces, one engine" />
+        <div className="link-list">
+          {SURFACES.map((item) => (
+            <Link key={item.title} href={item.href} className="link-row flex items-baseline gap-4">
+              <span className="display w-32 shrink-0 text-[15px] text-[var(--ink)]">
+                {item.title}
+              </span>
+              <span className="text-[13.5px] leading-relaxed text-[var(--ink-muted)]">
+                {item.desc}
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="panel">
-        <div className="panel-inner flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="label text-[var(--accent)]">Next</p>
-            <p className="mt-1 text-sm text-[var(--ink-muted)]">
-              See when teams run these checks — transfer hooks, vaults, CI, pre-audit.
-            </p>
-          </div>
-          <Link href="/use-cases" className="btn btn-ghost text-[10px]">
-            Use cases →
-          </Link>
+      <section className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] pt-7">
+        <div>
+          <p className="eyebrow mb-1.5">Next</p>
+          <p className="text-sm text-[var(--ink-muted)]">
+            See when teams run these checks — hooks, vaults, CI, and pre-audit.
+          </p>
         </div>
+        <Link href="/use-cases" className="btn btn-ghost">
+          Use cases ↗
+        </Link>
       </section>
     </div>
   );

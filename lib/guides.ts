@@ -21,7 +21,7 @@ export const GUIDES: Guide[] = [
     category: "start",
     title: "Token-2022 Is Not SPL Token",
     summary:
-      "Why copying SPL patterns ships criticals — extensions rewrite sizing, transfers, custody, and hook invocation. Migration checklist with scan commands.",
+      "A different program id, variable account sizes, in-flight fees, and hook-invoking transfers. Where copying SPL patterns ships criticals, with a migration checklist to token_interface and transfer_checked.",
     readMinutes: 12,
   },
   {
@@ -29,7 +29,7 @@ export const GUIDES: Guide[] = [
     category: "hooks",
     title: "Transfer Hook Security Checklist",
     summary:
-      "Step-by-step: transferring state, ExtraAccountMetaList seeds, acyclicity, Anchor fallback, extra-account validation, and upgrade authority.",
+      "Six guards before mainnet: assert the transferring state (T22-001), seed-validate ExtraAccountMetaList, stay acyclic, wire the Anchor fallback, validate extra-account owners, and verify hook upgrade authority.",
     readMinutes: 15,
   },
   {
@@ -37,7 +37,7 @@ export const GUIDES: Guide[] = [
     category: "integration",
     title: "Transfer Fee Math That Auditors Flag",
     summary:
-      "Why calculate_fee ≠ inverse, when to use transfer_checked_with_fee, and how epoch transitions (T22-021) break static fee assumptions.",
+      "Use transfer_checked_with_fee, keep one fee direction so calculate_epoch_fee and the inverse helper do not drift balances, and resolve the fee for the current epoch (T22-021) instead of a static rate.",
     readMinutes: 10,
   },
   {
@@ -45,7 +45,7 @@ export const GUIDES: Guide[] = [
     category: "integration",
     title: "CPI Guard & ImmutableOwner for Vaults",
     summary:
-      "Harden program-owned token accounts, inspect incoming mints for permanent delegate and close authority, and gate deposits safely.",
+      "Harden program-owned accounts with CpiGuard (T22-010) and ImmutableOwner (T22-011), then screen incoming mints for permanent delegate, close authority, NonTransferable, Pausable, and frozen state.",
     readMinutes: 10,
   },
   {
@@ -53,7 +53,7 @@ export const GUIDES: Guide[] = [
     category: "integration",
     title: "Pointer & Pausable Extensions",
     summary:
-      "GroupPointer, MetadataPointer, ScaledUiAmount, Pausable, and post-CPI mint authority — validation patterns and the extensions sample.",
+      "Validate GroupPointer and MetadataPointer links, apply the ScaledUiAmount multiplier before pricing, check pause state before transfers, and reload the mint after a CPI before reading mint_authority (T22-025).",
     readMinutes: 12,
   },
   {
@@ -61,7 +61,7 @@ export const GUIDES: Guide[] = [
     category: "workflow",
     title: "Pre-Audit Prep Workflow",
     summary:
-      "Full scan, SARIF/Markdown export, triage by extension area, and what to hand auditors before kickoff.",
+      "Run a full scan one to two weeks before kickoff, export Markdown or SARIF, triage findings by extension area, and hand auditors a documented baseline of cleared and deferred items.",
     readMinutes: 8,
   },
   {
@@ -69,7 +69,7 @@ export const GUIDES: Guide[] = [
     category: "workflow",
     title: "Gate PRs with Token2022 Guard + SARIF",
     summary:
-      "GitHub Action setup, permissions, fail-on thresholds, and tuning with --only / --except until config files ship.",
+      "Set up the GitHub Action, grant security-events write for SARIF upload, fail builds on high and critical with --fail-on, and scope noisy runs with --only and --except.",
     readMinutes: 8,
   },
   {
@@ -77,7 +77,7 @@ export const GUIDES: Guide[] = [
     category: "workflow",
     title: "npx token2022-guard in CI",
     summary:
-      "Run the published npm package in GitHub Actions without cloning the linter repo — smoke-tested install path.",
+      "Run the published package in GitHub Actions without cloning the repo. Minimal runtime footprint, a smoke-tested install path, and version pinning for protected branches.",
     readMinutes: 6,
   },
   {
@@ -85,7 +85,7 @@ export const GUIDES: Guide[] = [
     category: "workflow",
     title: "CLI Quickstart",
     summary:
-      "Local scan, npx after publish, JSON/SARIF/Markdown output, filters, and npm run smoke verification.",
+      "Run the same 26-check engine locally or in CI: table, JSON, SARIF, and Markdown output, severity-based exit codes with --fail-on, and check filters with --only and --except.",
     readMinutes: 7,
   },
 ];

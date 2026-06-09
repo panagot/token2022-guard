@@ -1,80 +1,76 @@
 import Link from "next/link";
 
-import { NAV_LINKS, SITE } from "@/lib/site";
+import { Logo } from "@/components/Logo";
 import { CHECKS } from "@/lib/checks";
+import { NAV_LINKS, SITE } from "@/lib/site";
 
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-[var(--line)] py-10">
-      <div className="mx-auto max-w-6xl space-y-8 px-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="display text-sm font-bold text-[var(--ink)]">{SITE.name}</p>
-            <p className="mt-1 text-xs text-[var(--ink-faint)]">
-              MIT · Solana public good · Pre-mainnet Token-2022 checks
+    <footer className="mt-20 border-t border-[var(--line)]">
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-12 sm:px-6 md:px-10 xl:px-14">
+        <div className="flex flex-wrap items-start justify-between gap-8">
+          <div className="max-w-xs">
+            <Link href="/" className="flex items-center gap-2.5 text-[var(--accent-ink)]">
+              <Logo size={22} />
+              <span className="display text-[15px] font-semibold text-[var(--ink)]">
+                {SITE.name}
+              </span>
+            </Link>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ink-faint)]">
+              An open security workbook for Solana Token-2022 integrations. MIT licensed,
+              built as a public good.
             </p>
           </div>
-          <Link href="/" className="btn btn-primary text-[10px]">
-            Run checks
-          </Link>
-        </div>
 
-        <div className="grid gap-8 sm:grid-cols-3">
-          <div>
-            <p className="label mb-3">Product</p>
-            <nav className="flex flex-col gap-2 text-xs text-[var(--ink-muted)]">
+          <div className="grid grid-cols-2 gap-x-12 gap-y-8 sm:grid-cols-3">
+            <nav className="flex flex-col gap-2.5">
+              <p className="eyebrow mb-1">Product</p>
               {NAV_LINKS.map((l) => (
-                <Link key={l.href} href={l.href} className="nav-link w-fit">
+                <Link key={l.href} href={l.href} className="nav-link w-fit text-[13.5px]">
                   {l.label}
                 </Link>
               ))}
-              <Link href="/" className="nav-link w-fit">
-                Analyzer
-              </Link>
             </nav>
-          </div>
-          <div>
-            <p className="label mb-3">Resources</p>
-            <nav className="flex flex-col gap-2 text-xs text-[var(--ink-muted)]">
-              <a href={SITE.spec} className="nav-link w-fit" target="_blank" rel="noreferrer">
+            <nav className="flex flex-col gap-2.5">
+              <p className="eyebrow mb-1">Resources</p>
+              <a href={SITE.spec} className="nav-link w-fit text-[13.5px]" target="_blank" rel="noreferrer">
                 Token-2022 spec
               </a>
-              <a href={SITE.github} className="nav-link w-fit" target="_blank" rel="noreferrer">
+              <a href={SITE.github} className="nav-link w-fit text-[13.5px]" target="_blank" rel="noreferrer">
                 GitHub
               </a>
-              <a href={SITE.npm} className="nav-link w-fit" target="_blank" rel="noreferrer">
-                npm
+              <a href={SITE.npm} className="nav-link w-fit text-[13.5px]" target="_blank" rel="noreferrer">
+                npm package
               </a>
-              <Link href="/use-cases" className="nav-link w-fit">
-                Use cases
-              </Link>
-              <Link href="/guides" className="nav-link w-fit">
+              <Link href="/guides" className="nav-link w-fit text-[13.5px]">
                 Guides
               </Link>
             </nav>
-          </div>
-          <div>
-            <p className="label mb-3">Related</p>
-            <nav className="flex flex-col gap-2 text-xs text-[var(--ink-muted)]">
+            <nav className="flex flex-col gap-2.5">
+              <p className="eyebrow mb-1">Related</p>
               <a
                 href="https://github.com/panagot/Anchor-Security-Prep"
-                className="nav-link w-fit"
+                className="nav-link w-fit text-[13.5px]"
                 target="_blank"
                 rel="noreferrer"
               >
                 Anchor Security Prep
               </a>
-              <a href={SITE.github} className="nav-link w-fit" target="_blank" rel="noreferrer">
+              <a href={SITE.github} className="nav-link w-fit text-[13.5px]" target="_blank" rel="noreferrer">
                 Report an issue
               </a>
             </nav>
           </div>
         </div>
 
-        <p className="text-[10px] leading-relaxed text-[var(--ink-faint)]">
-          {SITE.version} · {CHECKS.length} checks · Static heuristics — not a substitute for a
-          professional audit. Review findings before sharing externally.
-        </p>
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--line-soft)] pt-6">
+          <p className="mono text-xs text-[var(--ink-faint)]">
+            {SITE.version} · {CHECKS.length} checks · T22-001 → T22-026
+          </p>
+          <p className="text-xs text-[var(--ink-faint)]">
+            Static heuristics — not a substitute for a professional audit.
+          </p>
+        </div>
       </div>
     </footer>
   );
