@@ -59,7 +59,7 @@ export default function ChecksPage() {
       <section className="panel">
         <div className="panel-inner flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm text-[var(--ink-muted)]">
-            Planned checks T22-018 → T22-026 are on the roadmap.
+            26 checks shipped (T22-001 → T22-026). Expansion toward 30+ on the roadmap.
           </p>
           <a
             href="https://github.com/panagot/token2022-guard/blob/main/ROADMAP.md"

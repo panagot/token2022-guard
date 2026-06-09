@@ -31,6 +31,10 @@ describe("integration examples", () => {
     expect(highSeverityCount(analyze(secure))).toBe(0);
   });
 
+  it("secure_hook has zero findings across full catalog", () => {
+    expect(analyze(secure).total).toBe(0);
+  });
+
   it("fee_mint_program triggers fee and SPL wiring checks", () => {
     const r = analyze(feeMint);
     const ids = new Set(r.findings.map((f) => f.checkId));
@@ -56,8 +60,8 @@ describe("per-check fixtures", () => {
 });
 
 describe("catalog", () => {
-  it("ships 18 checks", () => {
-    expect(CHECKS.length).toBe(18);
+  it("ships 26 checks", () => {
+    expect(CHECKS.length).toBe(26);
   });
 
   it("every check has a fixture pair", () => {

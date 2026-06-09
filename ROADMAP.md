@@ -1,11 +1,11 @@
 # T22 Guard — Roadmap
 
-The engine lives in `lib/` and already powers four surfaces (web UI, CLI, GitHub Action, VS Code).
+The engine lives in `lib/` and powers four surfaces (web UI, CLI, GitHub Action, VS Code).
 Everything below extends that one engine — no duplicated logic.
 
 ## Check catalog
 
-### Shipped (18)
+### Shipped (26) — T22-001 → T22-026
 
 | ID | Severity | Issue |
 |----|----------|-------|
@@ -26,22 +26,27 @@ Everything below extends that one engine — no duplicated logic.
 | T22-015 | low | Interest-bearing mint amount/UI confusion |
 | T22-016 | high | Mint close authority not checked on deposit |
 | T22-017 | high | Hook extra accounts lack owner validation |
+| T22-018 | medium | Group/member pointer not bidirectionally validated |
+| T22-019 | medium | Metadata pointer not validated against mint |
+| T22-020 | medium | Scaled UI amount multiplier ignored |
+| T22-021 | medium | Transfer fee epoch transition not handled |
+| T22-022 | medium | Non-transferable mint assumed transferable |
+| T22-023 | low | Pausable extension not checked before transfer |
 | T22-024 | high | Hook program upgrade authority not verified |
+| T22-025 | medium | Mint authority not re-checked after CPI |
+| T22-026 | low | Account frozen state not checked before transfer |
 
 Each shipped check has: vulnerable + secure fixtures, unit tests (fire + pass), spec reference.
 
 ### Planned (toward 30+)
 
-| ID | Severity | Issue |
-|----|----------|-------|
-| T22-018 | medium | Group/member pointer not bidirectionally validated |
-| T22-019 | medium | Metadata pointer points outside the mint (spoofable) |
-| T22-020 | medium | Scaled-UI-amount multiplier ignored in pricing |
-| T22-021 | medium | `transfer_fee` epoch transition not handled (older vs newer fee) |
-| T22-022 | medium | Non-transferable mint assumed transferable |
-| T22-023 | low | Pausable extension state not checked before transfer |
-| T22-025 | medium | Mint authority not re-checked after CPI |
-| T22-026 | low | Missing `AccountState` check before transfer (frozen at runtime) |
+| Theme | Examples |
+|-------|----------|
+| Extension init | Missing `ExtensionType` on account creation, wrong init order |
+| Account sizing | `realloc` not called when adding extensions mid-life |
+| Fee operations | Withheld-fee harvest before balance reads |
+| Hook wiring | Execute discriminator account ordering, cross-mint CPI guards |
+| Engine | AST layer (`syn`) to cut regex false positives |
 
 ## CLI add-ons
 
@@ -50,8 +55,8 @@ Each shipped check has: vulnerable + secure fixtures, unit tests (fire + pass), 
 - CI gating: `--fail-on=<severity>` with exit codes
 - Check filtering: `--only=`, `--except=`
 - `--no-color`, `--version`, `--help`
-- **npm package** → `npx token2022-guard ./programs` (v0.1.1)
-- **Unit tests** — `npm test` (Vitest, per-check fixtures)
+- **npm package** → `npx token2022-guard ./programs` (v0.2.0)
+- **Unit tests** — `npm test` (59 tests, Vitest, per-check fixtures)
 - **Benchmark** — `npm run benchmark` → [BENCHMARK.md](./BENCHMARK.md)
 
 ### Planned (M2)

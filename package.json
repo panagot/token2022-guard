@@ -1,6 +1,6 @@
 {
   "name": "token2022-guard",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Pre-mainnet safety checks for Solana Token-2022 integrations. CLI, VS Code, SARIF.",
   "license": "MIT",
   "author": "panagot",

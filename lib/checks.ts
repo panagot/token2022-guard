@@ -140,12 +140,76 @@ export const CHECKS: CheckMeta[] = [
     reference: `${REF_BASE}/transfer-hook`,
   },
   {
+    id: "T22-018",
+    title: "Group/member pointer not bidirectionally validated",
+    severity: "medium",
+    summary:
+      "GroupPointer and MemberPointer must point at each other. Trusting a one-way pointer lets attackers spoof group membership metadata.",
+    reference: `${REF_BASE}/group-member-pointer`,
+  },
+  {
+    id: "T22-019",
+    title: "Metadata pointer not validated against mint",
+    severity: "medium",
+    summary:
+      "MetadataPointer accounts must be tied to the mint authority. Reading metadata from an unvalidated pointer enables spoofed token metadata.",
+    reference: `${REF_BASE}/metadata-pointer`,
+  },
+  {
+    id: "T22-020",
+    title: "Scaled UI amount multiplier ignored",
+    severity: "medium",
+    summary:
+      "ScaledUiAmount mints store a multiplier separate from raw amount. Pricing or accounting on `.amount` alone misstates balances.",
+    reference: `${REF_BASE}/scaled-ui-amount`,
+  },
+  {
+    id: "T22-021",
+    title: "Transfer fee epoch transition not handled",
+    severity: "medium",
+    summary:
+      "Transfer fees can change at epoch boundaries (older vs newer fee). Ignoring the epoch picks the wrong fee and drifts balances.",
+    reference: `${REF_BASE}/transfer-fee`,
+  },
+  {
+    id: "T22-022",
+    title: "Non-transferable mint assumed transferable",
+    severity: "medium",
+    summary:
+      "Mints with the NonTransferable extension revert ordinary transfers. Programs must detect the extension before moving tokens.",
+    reference: `${REF_BASE}/non-transferable`,
+  },
+  {
+    id: "T22-023",
+    title: "Pausable extension not checked before transfer",
+    severity: "low",
+    summary:
+      "Pausable mints can halt transfers at runtime. Moving tokens without reading pause state will revert or surprise integrators.",
+    reference: `${REF_BASE}/pausable`,
+  },
+  {
     id: "T22-024",
     title: "Hook program upgrade authority not verified",
     severity: "high",
     summary:
       "Pointing a mint at an external hook program without checking upgrade authority lets a third party swap hook logic after users deposit.",
     reference: `${REF_BASE}/transfer-hook`,
+  },
+  {
+    id: "T22-025",
+    title: "Mint authority not re-checked after CPI",
+    severity: "medium",
+    summary:
+      "A CPI can change mint authority or account data. Using cached mint authority after a CPI without reload/verify enables authority hijacks.",
+    reference: "https://spl.solana.com/token-2022",
+  },
+  {
+    id: "T22-026",
+    title: "Account frozen state not checked before transfer",
+    severity: "low",
+    summary:
+      "Token accounts can be frozen at runtime. Transferring without checking AccountState will revert or strand user flows.",
+    reference: `${REF_BASE}/default-account-state`,
   },
 ];
 
@@ -562,6 +626,124 @@ const checks: Check[] = [
     ];
   },
 
+  // T22-018 — group/member pointer bidirectional validation
+  (ctx) => {
+    const usesPointer = has(ctx.source, /GroupPointer|MemberPointer|group_pointer|member_pointer/i);
+    if (!usesPointer) return [];
+    const validates = has(
+      ctx.source,
+      /member_pointer.*group|group_pointer.*member|verify.*pointer|validate.*pointer|bidirectional|require.*pointer/i,
+    );
+    if (validates) return [];
+    const anchor = scan(codeLines(ctx.lines), {
+      test: (s) => /GroupPointer|MemberPointer|group_pointer|member_pointer/i.test(s),
+    });
+    return [
+      finding(
+        "T22-018",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "GroupPointer or MemberPointer is used without bidirectional validation. A one-way pointer can reference a spoofed group or member record.",
+        "Verify GroupPointer and MemberPointer reference each other (and the expected authorities) before trusting membership metadata.",
+        "medium",
+      ),
+    ];
+  },
+
+  // T22-019 — metadata pointer validation
+  (ctx) => {
+    if (!has(ctx.source, /MetadataPointer|metadata_pointer/i)) return [];
+    if (has(ctx.source, /verify.*metadata|metadata.*authority|require_keys_eq.*metadata|TokenMetadata|validate.*metadata/i))
+      return [];
+    const anchor = scan(codeLines(ctx.lines), {
+      test: (s) => /MetadataPointer|metadata_pointer/i.test(s),
+    });
+    return [
+      finding(
+        "T22-019",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "MetadataPointer is referenced but the metadata account is not validated against the mint authority. Attackers can supply spoofed metadata accounts.",
+        "Require the metadata pointer authority matches the mint (or a known PDA) before reading token metadata.",
+        "medium",
+      ),
+    ];
+  },
+
+  // T22-020 — scaled UI amount multiplier
+  (ctx) => {
+    if (!has(ctx.source, /ScaledUiAmount|scaled_ui_amount/i)) return [];
+    if (has(ctx.source, /multiplier|scaled_ui|ui_multiplier|ScaledUiAmountConfig/i)) return [];
+    if (has(ctx.source, /amount_to_ui_amount|ui_amount_to_amount/i)) return [];
+    const anchor = scan(codeLines(ctx.lines), { test: (s) => /\.amount\b|ScaledUiAmount/i.test(s) });
+    return [
+      finding(
+        "T22-020",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "A ScaledUiAmount mint is used but balances are read from the raw `amount` without applying the multiplier.",
+        "Apply the ScaledUiAmount multiplier (or the UI conversion helpers) when pricing or displaying balances.",
+        "low",
+      ),
+    ];
+  },
+
+  // T22-021 — transfer fee epoch transition
+  (ctx) => {
+    if (!has(ctx.source, /TransferFee|transfer_fee|withheld_amount/i)) return [];
+    if (has(ctx.source, /newer_transfer_fee|older_transfer_fee|fee_epoch|epoch.*fee|get_epoch/i)) return [];
+    const anchor = scan(codeLines(ctx.lines), {
+      test: (s) => /TransferFee|transfer_fee|withheld/i.test(s),
+    });
+    return [
+      finding(
+        "T22-021",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "Transfer fees are used but epoch transitions (older vs newer fee) are not handled. Fee changes at epoch boundaries will pick the wrong rate.",
+        "Read the fee for the current epoch (`newer_transfer_fee` / `older_transfer_fee`) instead of assuming a static rate.",
+        "medium",
+      ),
+    ];
+  },
+
+  // T22-022 — non-transferable mint
+  (ctx) => {
+    if (!has(ctx.source, /transfer_checked|token_interface::transfer|token::transfer\s*\(/)) return [];
+    if (has(ctx.source, /NonTransferable|non_transferable|ExtensionType::NonTransferable/i)) return [];
+    const anchor = scan(codeLines(ctx.lines), {
+      test: (s) => /transfer_checked|token_interface::transfer|token::transfer\s*\(/.test(s),
+    });
+    return [
+      finding(
+        "T22-022",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "Token transfers are performed without checking for the NonTransferable extension. Such mints revert ordinary transfers.",
+        "Detect `NonTransferable` on the mint and refuse or route through the supported transfer path before moving tokens.",
+        "medium",
+      ),
+    ];
+  },
+
+  // T22-023 — pausable extension
+  (ctx) => {
+    if (!has(ctx.source, /Pausable|pausable|ExtensionType::Pausable/i)) return [];
+    if (!has(ctx.source, /transfer_checked|token::transfer|token_interface::transfer/)) return [];
+    if (has(ctx.source, /is_paused|paused\(\)|pause_state|!.*paused|check_pause/i)) return [];
+    const anchor = scan(codeLines(ctx.lines), { test: (s) => /Pausable|pausable/i.test(s) });
+    return [
+      finding(
+        "T22-023",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "A pausable mint is referenced but transfers do not check whether the mint is paused.",
+        "Read the Pausable extension and abort transfers when `is_paused` is true.",
+        "low",
+      ),
+    ];
+  },
+
   // T22-024 — hook program upgrade authority
   (ctx) => {
     const setsHook = has(ctx.source, /transfer_hook_program|set_transfer_hook|hook_program_id/i);
@@ -579,6 +761,44 @@ const checks: Check[] = [
         "A transfer hook program id is configured without verifying upgrade authority. The hook logic can be swapped after users integrate.",
         "Before trusting a hook program, verify its upgrade authority is revoked or held by a known multisig you accept.",
         "medium",
+      ),
+    ];
+  },
+
+  // T22-025 — mint authority after CPI
+  (ctx) => {
+    const doesCpi = has(ctx.source, /CpiContext::new|invoke\(|invoke_signed/);
+    const touchesMintAuth = has(ctx.source, /mint_authority|set_authority|MintAuthority/);
+    if (!doesCpi || !touchesMintAuth) return [];
+    if (has(ctx.source, /reload|account_info\.reload|refresh.*mint|verify_mint_authority|revalidate/i)) return [];
+    const anchor = scan(codeLines(ctx.lines), { test: (s) => /mint_authority|set_authority/.test(s) });
+    return [
+      finding(
+        "T22-025",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "Mint authority is used after a CPI without reloading or re-verifying the mint account. A malicious CPI can swap authority between calls.",
+        "Reload the mint account (or re-read authority from chain) after any CPI before trusting `mint_authority`.",
+        "medium",
+      ),
+    ];
+  },
+
+  // T22-026 — frozen account state before transfer
+  (ctx) => {
+    if (!has(ctx.source, /transfer_checked|token_interface::transfer|token::transfer\s*\(/)) return [];
+    if (has(ctx.source, /AccountState|is_frozen|\.state\s*==|Frozen|thaw_account|freeze_state/i)) return [];
+    const anchor = scan(codeLines(ctx.lines), {
+      test: (s) => /transfer_checked|token_interface::transfer|token::transfer\s*\(/.test(s),
+    });
+    return [
+      finding(
+        "T22-026",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "Token transfers are issued without checking whether source or destination accounts are frozen.",
+        "Read `AccountState` (or call thaw when appropriate) before transferring tokens.",
+        "low",
       ),
     ];
   },

@@ -85,7 +85,7 @@ findings appear as inline diagnostics with hover remediation and spec links.
 
 ---
 
-## What it checks (18)
+## What it checks (26)
 
 | ID | Severity | Issue |
 |----|----------|-------|
@@ -106,12 +106,20 @@ findings appear as inline diagnostics with hover remediation and spec links.
 | T22-015 | low | Interest-bearing mint amount/UI confusion |
 | T22-016 | high | Mint close authority not checked on deposit |
 | T22-017 | high | Hook extra accounts lack owner validation |
+| T22-018 | medium | Group/member pointer not bidirectionally validated |
+| T22-019 | medium | Metadata pointer not validated against mint |
+| T22-020 | medium | Scaled UI amount multiplier ignored |
+| T22-021 | medium | Transfer fee epoch transition not handled |
+| T22-022 | medium | Non-transferable mint assumed transferable |
+| T22-023 | low | Pausable extension not checked before transfer |
 | T22-024 | high | Hook program upgrade authority not verified |
+| T22-025 | medium | Mint authority not re-checked after CPI |
+| T22-026 | low | Account frozen state not checked before transfer |
 
 Each finding includes severity, confidence, the offending line (when detectable), a
 remediation, and a link to the [Token-2022 extensions spec](https://spl.solana.com/token-2022/extensions).
 
-Planned checks (T22-018 → T22-026) are listed in [ROADMAP.md](./ROADMAP.md).
+Full catalog with summaries: [token2022-guard.vercel.app/checks](https://token2022-guard.vercel.app/checks).
 
 ---
 
@@ -119,9 +127,9 @@ Planned checks (T22-018 → T22-026) are listed in [ROADMAP.md](./ROADMAP.md).
 
 | File | Findings (approx.) | Purpose |
 |------|-------------------|---------|
-| `examples/vulnerable_hook.rs` | 14 (1 critical, 6 high) | Intentionally bad transfer-hook + deposit patterns |
-| `examples/secure_hook.rs` | 0 high/critical | Audit-derived guards: transferring assertion, PDA whitelist, `token_interface`, fallback dispatcher |
-| `examples/fee_mint_program.rs` | 9 (3 high) | Bad fee handling + SPL Token wiring on a deposit vault |
+| `examples/vulnerable_hook.rs` | 16 (1 critical, 6 high) | Intentionally bad transfer-hook + deposit patterns |
+| `examples/secure_hook.rs` | 0 | Audit-derived guards: transferring assertion, PDA whitelist, `token_interface`, fallback dispatcher |
+| `examples/fee_mint_program.rs` | 11 (3 high) | Bad fee handling + SPL Token wiring on a deposit vault |
 
 ```bash
 npm run scan:examples
@@ -132,7 +140,7 @@ npm run scan:examples
 ## Tests & benchmark
 
 ```bash
-npm test              # 42 tests — fire + pass per check + integration examples
+npm test              # 59 tests — fire + pass per check + integration examples
 npm run benchmark     # corpus scan → benchmark/results.json
 ```
 
@@ -192,12 +200,12 @@ No environment variables required for the web UI.
 
 See [ROADMAP.md](./ROADMAP.md):
 
-- Expand to 30+ checks (T22-018 → T22-026)
+- Expand toward 30+ checks (extension init, realloc, withheld-fee harvest)
 - Config files, baselines, inline suppressions (M2)
 - VS Code quick-fixes and Marketplace publish
 - Secure transfer-hook template + Mollusk/LiteSVM test harness
 
-**Shipped in v0.1.1:** 18 checks, unit tests, `npx token2022-guard`, [BENCHMARK.md](./BENCHMARK.md).
+**Shipped in v0.2.0:** 26 checks (T22-001 → T22-026), 59 unit tests, `npx token2022-guard`, [BENCHMARK.md](./BENCHMARK.md).
 Grant reviewer walkthrough: [token2022-guard.vercel.app/reviewer](https://token2022-guard.vercel.app/reviewer).
 
 ---

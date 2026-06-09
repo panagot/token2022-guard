@@ -13,7 +13,7 @@ const PROOF = [
   {
     label: "Live analyzer",
     href: "/?sample=vulnerable",
-    detail: "Vulnerable hook → 14 findings. Toggle secure → 0 high/critical.",
+    detail: "Vulnerable hook → 16 findings. Toggle secure → 0 across all 26 checks.",
   },
   {
     label: "CLI + SARIF",
@@ -36,7 +36,7 @@ const MILESTONES = [
   {
     phase: "M1 · $1,500 · weeks 1–2",
     items: [
-      "18 checks with unit tests (fire + pass per check)",
+      "26 checks with unit tests (fire + pass per check)",
       "npm publish → npx token2022-guard",
       "BENCHMARK.md on real + pattern corpora",
       "fee_mint_program.rs example",
@@ -48,7 +48,7 @@ const MILESTONES = [
       "VS Code .vsix release",
       ".t22guard.json config + inline suppressions",
       "Secure transfer-hook starter template",
-      "25 checks · reviewer-ready v1",
+      "Config + suppressions · reviewer-ready v1 polish",
     ],
   },
 ];
@@ -110,7 +110,7 @@ export default function ReviewerPage() {
       <section className="space-y-4">
         <h2 className="label">Shipped today ({SITE.version})</h2>
         <ul className="grid gap-2 text-sm text-[var(--ink-muted)] sm:grid-cols-2">
-          <li>· {CHECKS.length} checks (T22-001 → T22-024)</li>
+          <li>· {CHECKS.length} checks (T22-001 → T22-026)</li>
           <li>· Web analyzer + use cases + guides</li>
           <li>· CLI: JSON / SARIF / Markdown</li>
           <li>· GitHub Action + VS Code prototype</li>

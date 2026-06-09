@@ -123,6 +123,38 @@ pub fn transfer_hook(ctx: Context<TransferHook>) -> Result<()> {
   Ok(())
 }`,
   },
+  "T22-018": {
+    bad: `ExtensionType::GroupPointer { group_address: g }
+let member = member_pointer;`,
+    good: `verify_group_member_bidirectional(&mint, &member_pointer)?;`,
+  },
+  "T22-019": {
+    bad: `ExtensionType::MetadataPointer { metadata_address: m }
+let meta = metadata_pointer;`,
+    good: `require_keys_eq!(metadata.authority, mint.key(), Error);`,
+  },
+  "T22-020": {
+    bad: `ExtensionType::ScaledUiAmount
+let price = account.amount;`,
+    good: `let ui = account.amount * multiplier;`,
+  },
+  "T22-021": {
+    bad: `TransferFeeConfig { transfer_fee_basis_points: 100 }
+token_interface::transfer_checked(ctx, amount, 6)?;`,
+    good: `let epoch = clock.epoch;
+let fee = mint.get_newer_transfer_fee(epoch);`,
+  },
+  "T22-022": {
+    bad: `token_interface::transfer_checked(ctx, amount, 6)?;`,
+    good: `if mint.get_extension::<NonTransferable>().is_ok() { return Err(...); }
+token_interface::transfer_checked(ctx, amount, 6)?;`,
+  },
+  "T22-023": {
+    bad: `ExtensionType::Pausable
+token_interface::transfer_checked(ctx, 1, 6)?;`,
+    good: `require!(!pausable.is_paused());
+token_interface::transfer_checked(ctx, 1, 6)?;`,
+  },
   "T22-024": {
     bad: `pub fn set_hook(ctx: Context<SetHook>, hook: Pubkey) -> Result<()> {
   mint.transfer_hook_program_id = hook;
@@ -133,5 +165,17 @@ pub fn transfer_hook(ctx: Context<TransferHook>) -> Result<()> {
   mint.transfer_hook_program_id = hook;
   Ok(())
 }`,
+  },
+  "T22-025": {
+    bad: `invoke(&ix, accounts)?;
+let auth = ctx.accounts.mint.mint_authority;`,
+    good: `invoke(&ix, accounts)?;
+ctx.accounts.mint.reload()?;
+verify_mint_authority(&ctx.accounts.mint)?;`,
+  },
+  "T22-026": {
+    bad: `token::transfer(cpi, amount)?;`,
+    good: `require!(source.state != AccountState::Frozen);
+token::transfer(cpi, amount)?;`,
   },
 };
