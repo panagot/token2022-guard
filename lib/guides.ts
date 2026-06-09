@@ -21,47 +21,71 @@ export const GUIDES: Guide[] = [
     category: "start",
     title: "Token-2022 Is Not SPL Token",
     summary:
-      "Why copying SPL patterns into Token-2022 code ships criticals — extensions rewrite assumptions the old model never had.",
-    readMinutes: 6,
+      "Why copying SPL patterns ships criticals — extensions rewrite sizing, transfers, custody, and hook invocation. Migration checklist with scan commands.",
+    readMinutes: 12,
   },
   {
     slug: "transfer-hook-checklist",
     category: "hooks",
     title: "Transfer Hook Security Checklist",
     summary:
-      "Assert transferring state, validate ExtraAccountMetaList seeds, avoid same-mint CPI, and wire the Anchor fallback dispatcher.",
-    readMinutes: 8,
+      "Step-by-step: transferring state, ExtraAccountMetaList seeds, acyclicity, Anchor fallback, extra-account validation, and upgrade authority.",
+    readMinutes: 15,
   },
   {
     slug: "transfer-fees",
     category: "integration",
     title: "Transfer Fee Math That Auditors Flag",
     summary:
-      "Why calculate_fee and calculate_inverse_fee are not inverses, and when to use transfer_checked_with_fee.",
-    readMinutes: 5,
+      "Why calculate_fee ≠ inverse, when to use transfer_checked_with_fee, and how epoch transitions (T22-021) break static fee assumptions.",
+    readMinutes: 10,
   },
   {
     slug: "vault-extensions",
     category: "integration",
     title: "CPI Guard & ImmutableOwner for Vaults",
     summary:
-      "Program-controlled token accounts should enable CPI Guard and ImmutableOwner before they custody user funds.",
-    readMinutes: 5,
+      "Harden program-owned token accounts, inspect incoming mints for permanent delegate and close authority, and gate deposits safely.",
+    readMinutes: 10,
+  },
+  {
+    slug: "extension-pointers",
+    category: "integration",
+    title: "Pointer & Pausable Extensions",
+    summary:
+      "GroupPointer, MetadataPointer, ScaledUiAmount, Pausable, and post-CPI mint authority — validation patterns and the extensions sample.",
+    readMinutes: 12,
+  },
+  {
+    slug: "pre-audit-prep",
+    category: "workflow",
+    title: "Pre-Audit Prep Workflow",
+    summary:
+      "Full scan, SARIF/Markdown export, triage by extension area, and what to hand auditors before kickoff.",
+    readMinutes: 8,
   },
   {
     slug: "ci-setup",
     category: "workflow",
     title: "Gate PRs with Token2022 Guard + SARIF",
     summary:
-      "Copy the GitHub Action, run --fail-on=high, and surface findings in the Security tab.",
-    readMinutes: 4,
+      "GitHub Action setup, permissions, fail-on thresholds, and tuning with --only / --except until config files ship.",
+    readMinutes: 8,
+  },
+  {
+    slug: "npm-ci",
+    category: "workflow",
+    title: "npx token2022-guard in CI",
+    summary:
+      "Run the published npm package in GitHub Actions without cloning the linter repo — smoke-tested install path.",
+    readMinutes: 6,
   },
   {
     slug: "cli-quickstart",
     category: "workflow",
     title: "CLI Quickstart",
     summary:
-      "npm run scan, JSON/SARIF/Markdown output, --only and --except filters for focused runs.",
-    readMinutes: 3,
+      "Local scan, npx after publish, JSON/SARIF/Markdown output, filters, and npm run smoke verification.",
+    readMinutes: 7,
   },
 ];

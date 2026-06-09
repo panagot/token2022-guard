@@ -22,10 +22,12 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const guide = GUIDE_CONTENT[slug];
   if (!guide) notFound();
 
+  const meta = GUIDES.find((g) => g.slug === slug);
+
   return (
     <article className="space-y-10">
       <PageHeader
-        eyebrow="Guide"
+        eyebrow={meta ? `${meta.readMinutes} min read` : "Guide"}
         title={guide.title}
         subtitle={guide.summary}
         actions={
@@ -53,6 +55,34 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 ))}
               </ul>
             )}
+            {section.numbered && (
+              <ol className="list-inside list-decimal space-y-2 text-sm text-[var(--ink-muted)]">
+                {section.numbered.map((n, k) => (
+                  <li key={k} className="pl-1">{n}</li>
+                ))}
+              </ol>
+            )}
+            {section.code && (
+              <pre className="code-block overflow-x-auto px-4 py-3 text-xs leading-relaxed">
+                {section.code}
+              </pre>
+            )}
+            {section.callout && (
+              <div
+                className={`panel border-l-2 ${
+                  section.callout.type === "warn"
+                    ? "border-[var(--high)]"
+                    : "border-[var(--accent)]"
+                }`}
+              >
+                <div className="panel-inner text-sm leading-relaxed text-[var(--ink-muted)]">
+                  <span className="label mr-2">
+                    {section.callout.type === "warn" ? "Warning" : "Tip"}
+                  </span>
+                  {section.callout.text}
+                </div>
+              </div>
+            )}
           </section>
         ))}
       </div>
@@ -64,9 +94,14 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <p className="font-mono text-xs text-[var(--accent)]">
               {guide.relatedChecks.join(" · ")}
             </p>
-            <Link href="/checks" className="btn btn-ghost mt-2 text-[10px]">
-              Full check catalog →
-            </Link>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Link href="/checks" className="btn btn-ghost text-[10px]">
+                Full catalog →
+              </Link>
+              <Link href="/use-cases" className="btn btn-ghost text-[10px]">
+                Use cases →
+              </Link>
+            </div>
           </div>
         </div>
       )}
