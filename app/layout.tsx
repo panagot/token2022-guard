@@ -30,7 +30,12 @@ export const metadata: Metadata = {
     url: "https://token2022-guard.vercel.app",
   },
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", sizes: "32x32" },
+    ],
+    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+    shortcut: ["/icon.svg"],
   },
 };
 
