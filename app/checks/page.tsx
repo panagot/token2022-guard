@@ -5,7 +5,7 @@ import { CHECKS } from "@/lib/checks";
 
 export const metadata = {
   title: "Checks",
-  description: "Full catalog of Token2022 Guard checks — T22-001 through T22-015.",
+  description: "Full catalog of Token2022 Guard checks — T22-001 through T22-024.",
 };
 
 export default function ChecksPage() {
@@ -59,7 +59,7 @@ export default function ChecksPage() {
       <section className="panel">
         <div className="panel-inner flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm text-[var(--ink-muted)]">
-            Planned checks T22-016 → T22-026 are on the roadmap.
+            Planned checks T22-018 → T22-026 are on the roadmap.
           </p>
           <a
             href="https://github.com/panagot/token2022-guard/blob/main/ROADMAP.md"

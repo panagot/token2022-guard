@@ -47,11 +47,14 @@ npm run dev
 Open [http://localhost:3002](http://localhost:3002). Load **Vulnerable transfer hook** to see
 findings, then **Secure transfer hook** to see them clear (0 high/critical).
 
-### CLI
+### CLI (local or npm)
 
 ```bash
-# Terminal report
+# After clone
 npm run scan -- ./examples
+
+# After npm publish (no clone)
+npx token2022-guard ./programs --fail-on=high
 
 # CI gate — exit 1 on high/critical
 npm run scan -- ./programs --fail-on=high
@@ -82,7 +85,7 @@ findings appear as inline diagnostics with hover remediation and spec links.
 
 ---
 
-## What it checks (15)
+## What it checks (18)
 
 | ID | Severity | Issue |
 |----|----------|-------|
@@ -101,11 +104,14 @@ findings appear as inline diagnostics with hover remediation and spec links.
 | T22-013 | medium | MemoTransfer requirement not handled |
 | T22-014 | low | DefaultAccountState (frozen) not handled |
 | T22-015 | low | Interest-bearing mint amount/UI confusion |
+| T22-016 | high | Mint close authority not checked on deposit |
+| T22-017 | high | Hook extra accounts lack owner validation |
+| T22-024 | high | Hook program upgrade authority not verified |
 
 Each finding includes severity, confidence, the offending line (when detectable), a
 remediation, and a link to the [Token-2022 extensions spec](https://spl.solana.com/token-2022/extensions).
 
-Planned checks (T22-016 → T22-026) are listed in [ROADMAP.md](./ROADMAP.md).
+Planned checks (T22-018 → T22-026) are listed in [ROADMAP.md](./ROADMAP.md).
 
 ---
 
@@ -113,8 +119,9 @@ Planned checks (T22-016 → T22-026) are listed in [ROADMAP.md](./ROADMAP.md).
 
 | File | Findings (approx.) | Purpose |
 |------|-------------------|---------|
-| `examples/vulnerable_hook.rs` | 13 (1 critical, 5 high) | Intentionally bad transfer-hook + deposit patterns |
+| `examples/vulnerable_hook.rs` | 14 (1 critical, 6 high) | Intentionally bad transfer-hook + deposit patterns |
 | `examples/secure_hook.rs` | 0 high/critical | Audit-derived guards: transferring assertion, PDA whitelist, `token_interface`, fallback dispatcher |
+| `examples/fee_mint_program.rs` | 9 (3 high) | Bad fee handling + SPL Token wiring on a deposit vault |
 
 ```bash
 npm run scan:examples
@@ -122,12 +129,24 @@ npm run scan:examples
 
 ---
 
+## Tests & benchmark
+
+```bash
+npm test              # 42 tests — fire + pass per check + integration examples
+npm run benchmark     # corpus scan → benchmark/results.json
+```
+
+See [BENCHMARK.md](./BENCHMARK.md) for false-positive notes and corpus results.
+
+---
+
 ## CI / GitHub Action
 
 `.github/workflows/token2022-guard.yml` runs on every push and PR:
 
-1. Scans `./examples` and fails on high/critical findings
-2. Uploads SARIF to the repository **Security** tab
+1. Runs unit tests (`npm test`)
+2. Scans `./examples` and fails on high/critical findings
+3. Uploads SARIF to the repository **Security** tab
 
 Copy the workflow into your own repo and point the scan path at your `programs/` directory.
 
@@ -173,11 +192,13 @@ No environment variables required for the web UI.
 
 See [ROADMAP.md](./ROADMAP.md):
 
-- Expand to 30+ checks
-- `npx token2022-guard` npm publish
-- Config files, baselines, inline suppressions
+- Expand to 30+ checks (T22-018 → T22-026)
+- Config files, baselines, inline suppressions (M2)
 - VS Code quick-fixes and Marketplace publish
 - Secure transfer-hook template + Mollusk/LiteSVM test harness
+
+**Shipped in v0.1.1:** 18 checks, unit tests, `npx token2022-guard`, [BENCHMARK.md](./BENCHMARK.md).
+Grant reviewer walkthrough: [token2022-guard.vercel.app/reviewer](https://token2022-guard.vercel.app/reviewer).
 
 ---
 

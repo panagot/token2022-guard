@@ -123,6 +123,30 @@ export const CHECKS: CheckMeta[] = [
       "InterestBearing mints accrue value; the raw `amount` is not the UI value. Use amount_to_ui_amount to avoid mispricing.",
     reference: `${REF_BASE}/interest-bearing-tokens`,
   },
+  {
+    id: "T22-016",
+    title: "Mint close authority not checked on deposit",
+    severity: "high",
+    summary:
+      "A mint whose close authority is still set can be closed and re-opened, breaking vault accounting and enabling confusion attacks on deposited assets.",
+    reference: `${REF_BASE}/mint-close-authority`,
+  },
+  {
+    id: "T22-017",
+    title: "Hook extra accounts lack owner validation",
+    severity: "high",
+    summary:
+      "Transfer hooks that trust extra accounts without verifying owner or PDA derivation allow attackers to inject spoofed whitelist or policy accounts.",
+    reference: `${REF_BASE}/transfer-hook`,
+  },
+  {
+    id: "T22-024",
+    title: "Hook program upgrade authority not verified",
+    severity: "high",
+    summary:
+      "Pointing a mint at an external hook program without checking upgrade authority lets a third party swap hook logic after users deposit.",
+    reference: `${REF_BASE}/transfer-hook`,
+  },
 ];
 
 export const CHECK_BY_ID = Object.fromEntries(CHECKS.map((c) => [c.id, c]));
@@ -495,6 +519,66 @@ const checks: Check[] = [
         "An interest-bearing mint is used but value is read from the raw `amount`. The displayed/effective value differs from the stored amount.",
         "Convert with `amount_to_ui_amount` when presenting or pricing balances of interest-bearing mints.",
         "low",
+      ),
+    ];
+  },
+
+  // T22-016 — mint close authority on deposit
+  (ctx) => {
+    if (!custodiesTokens(ctx.source)) return [];
+    if (has(ctx.source, /close_authority|CloseAuthority|mint.*close|is_none\(\)/i)) return [];
+    if (!has(ctx.source, /\bMint\b|mint:/)) return [];
+    return [
+      finding(
+        "T22-016",
+        0,
+        "",
+        "The program accepts deposits against a mint but never checks whether the mint close authority is disabled. A closable mint can break vault assumptions.",
+        "Require `mint.close_authority` is None (or an explicitly trusted authority) before accepting deposits.",
+        "high",
+      ),
+    ];
+  },
+
+  // T22-017 — hook extra account owner validation
+  (ctx) => {
+    if (!ctx.isTransferHook) return [];
+    const usesExtra = has(ctx.source, /extra_account|whitelist|policy|gate/i);
+    const validatesOwner = has(
+      ctx.source,
+      /require_keys_eq!|\.owner|has_one|owner\s*==|find_program_address|seeds\s*=/,
+    );
+    if (!usesExtra || validatesOwner) return [];
+    const anchor = scan(codeLines(ctx.lines), { test: (s) => /transfer_hook|fn\s+execute/.test(s) });
+    return [
+      finding(
+        "T22-017",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "The transfer hook reads extra accounts (e.g. whitelist) without validating owner or re-deriving PDAs from seeds.",
+        "Re-derive every policy PDA inside the hook and reject accounts whose owner or seeds do not match expectations.",
+        "medium",
+      ),
+    ];
+  },
+
+  // T22-024 — hook program upgrade authority
+  (ctx) => {
+    const setsHook = has(ctx.source, /transfer_hook_program|set_transfer_hook|hook_program_id/i);
+    const verifiesUpgrade = has(
+      ctx.source,
+      /upgrade_authority|UpgradeableLoader|program_data|is_executable|verify.*hook/i,
+    );
+    if (!setsHook || verifiesUpgrade) return [];
+    const anchor = scan(codeLines(ctx.lines), { test: (s) => /transfer_hook|hook_program/.test(s) });
+    return [
+      finding(
+        "T22-024",
+        anchor[0]?.line ?? 0,
+        anchor[0]?.text ?? "",
+        "A transfer hook program id is configured without verifying upgrade authority. The hook logic can be swapped after users integrate.",
+        "Before trusting a hook program, verify its upgrade authority is revoked or held by a known multisig you accept.",
+        "medium",
       ),
     ];
   },

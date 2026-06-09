@@ -1,0 +1,94 @@
+{
+  "generated": "2026-06-09T11:06:08.227Z",
+  "results": [
+    {
+      "path": "examples/fee_mint_program.rs",
+      "total": 9,
+      "summary": {
+        "critical": 0,
+        "high": 3,
+        "medium": 6,
+        "low": 0
+      },
+      "checks": [
+        "T22-004",
+        "T22-005",
+        "T22-006",
+        "T22-007",
+        "T22-009",
+        "T22-010",
+        "T22-011",
+        "T22-016"
+      ]
+    },
+    {
+      "path": "examples/secure_hook.rs",
+      "total": 0,
+      "summary": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "checks": []
+    },
+    {
+      "path": "examples/vulnerable_hook.rs",
+      "total": 14,
+      "summary": {
+        "critical": 1,
+        "high": 6,
+        "medium": 7,
+        "low": 0
+      },
+      "checks": [
+        "T22-001",
+        "T22-002",
+        "T22-003",
+        "T22-004",
+        "T22-005",
+        "T22-006",
+        "T22-007",
+        "T22-009",
+        "T22-010",
+        "T22-011",
+        "T22-012",
+        "T22-016"
+      ]
+    },
+    {
+      "path": "benchmark/external/hook_without_guard.rs",
+      "total": 3,
+      "summary": {
+        "critical": 1,
+        "high": 1,
+        "medium": 1,
+        "low": 0
+      },
+      "checks": [
+        "T22-001",
+        "T22-012",
+        "T22-017"
+      ]
+    },
+    {
+      "path": "benchmark/external/spl_style_vault.rs",
+      "total": 7,
+      "summary": {
+        "critical": 0,
+        "high": 3,
+        "medium": 4,
+        "low": 0
+      },
+      "checks": [
+        "T22-004",
+        "T22-005",
+        "T22-007",
+        "T22-009",
+        "T22-010",
+        "T22-011",
+        "T22-016"
+      ]
+    }
+  ]
+}

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s · Token2022 Guard",
   },
   description:
-    "Pre-mainnet safety checks for Solana Token-2022 integrations. 15 checks for transfer hooks, fees, delegates, and account sizing.",
+    "Pre-mainnet safety checks for Solana Token-2022 integrations. 18 checks for transfer hooks, fees, delegates, and account sizing.",
   metadataBase: new URL("https://token2022-guard.vercel.app"),
   openGraph: {
     title: "Token2022 Guard",

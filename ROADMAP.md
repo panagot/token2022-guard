@@ -1,11 +1,11 @@
 # T22 Guard — Roadmap
 
-The engine lives in `lib/` and already powers three surfaces (web UI, CLI, VS Code).
+The engine lives in `lib/` and already powers four surfaces (web UI, CLI, GitHub Action, VS Code).
 Everything below extends that one engine — no duplicated logic.
 
 ## Check catalog
 
-### Shipped (15)
+### Shipped (18)
 
 | ID | Severity | Issue |
 |----|----------|-------|
@@ -24,25 +24,24 @@ Everything below extends that one engine — no duplicated logic.
 | T22-013 | medium | MemoTransfer requirement not handled |
 | T22-014 | low | DefaultAccountState (frozen) not handled |
 | T22-015 | low | Interest-bearing mint amount/UI confusion |
+| T22-016 | high | Mint close authority not checked on deposit |
+| T22-017 | high | Hook extra accounts lack owner validation |
+| T22-024 | high | Hook program upgrade authority not verified |
+
+Each shipped check has: vulnerable + secure fixtures, unit tests (fire + pass), spec reference.
 
 ### Planned (toward 30+)
 
 | ID | Severity | Issue |
 |----|----------|-------|
-| T22-016 | high | Mint close authority enables close/reopen confusion |
-| T22-017 | high | Transfer hook reads extra accounts without owner checks |
 | T22-018 | medium | Group/member pointer not bidirectionally validated |
 | T22-019 | medium | Metadata pointer points outside the mint (spoofable) |
 | T22-020 | medium | Scaled-UI-amount multiplier ignored in pricing |
 | T22-021 | medium | `transfer_fee` epoch transition not handled (older vs newer fee) |
 | T22-022 | medium | Non-transferable mint assumed transferable |
 | T22-023 | low | Pausable extension state not checked before transfer |
-| T22-024 | high | Hook program upgrade authority unverified before trust |
 | T22-025 | medium | Mint authority not re-checked after CPI |
 | T22-026 | low | Missing `AccountState` check before transfer (frozen at runtime) |
-
-Each new check ships with: a vulnerable + secure fixture, a unit test asserting it
-fires/passes, and a spec reference.
 
 ## CLI add-ons
 
@@ -51,9 +50,11 @@ fires/passes, and a spec reference.
 - CI gating: `--fail-on=<severity>` with exit codes
 - Check filtering: `--only=`, `--except=`
 - `--no-color`, `--version`, `--help`
+- **npm package** → `npx token2022-guard ./programs` (v0.1.1)
+- **Unit tests** — `npm test` (Vitest, per-check fixtures)
+- **Benchmark** — `npm run benchmark` → [BENCHMARK.md](./BENCHMARK.md)
 
-### Planned
-- **npm publish** → `npx t22-guard ./programs` (no clone needed)
+### Planned (M2)
 - **Config file** `.t22guard.json` — per-repo severity overrides, ignore paths, disabled checks
 - **Baseline** `--baseline t22.baseline.json` — suppress known/accepted findings (clean PR diffs)
 - **Watch mode** `--watch` for local dev loops
@@ -66,18 +67,18 @@ fires/passes, and a spec reference.
 ### Shipped
 - **VS Code extension** (`vscode-extension/`) — live diagnostics on `.rs` files, severity-mapped, hover shows fix + reference.
 
-### Planned
+### Planned (M2)
 - Quick-fix **code actions** (insert remediation snippet)
 - Workspace-wide scan command + status-bar summary
 - Per-check enable/disable in settings
-- **Marketplace** publish
+- **Marketplace** publish (`.vsix` release)
 - Neovim / LSP server (reuse the same engine over a thin LSP layer)
 
 ## Test harness & templates (grant M2)
 
 - **Secure transfer-hook template** repo devs can clone (`create-t22-hook`)
 - **Mollusk / LiteSVM harness** proving each guard actually blocks the matching exploit
-- **False-positive benchmark** against real Token-2022 repos with a published write-up
+- **Full-repo benchmark** against public Token-2022 programs (extend `benchmark/external/`)
 
 ## Engine
 
