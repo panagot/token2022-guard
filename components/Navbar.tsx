@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { Logo } from "@/components/Logo";
 import { NAV_LINKS, SITE } from "@/lib/site";
 
 export function Navbar() {
@@ -13,8 +14,7 @@ export function Navbar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
         <Link href="/" className="group flex shrink-0 items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded border border-[var(--accent)] bg-[var(--accent-dim)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icon.svg" alt="" width={28} height={28} className="h-7 w-7" />
+            <Logo size={28} />
           </span>
           <div className="hidden sm:block">
             <div className="display text-base font-bold leading-none text-[var(--ink)] transition-colors group-hover:text-[var(--accent)]">
