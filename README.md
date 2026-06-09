@@ -211,7 +211,7 @@ See [ROADMAP.md](./ROADMAP.md):
 - VS Code quick-fixes and Marketplace publish
 - Secure transfer-hook template + Mollusk/LiteSVM test harness
 
-**Shipped in v0.2.3:** 26 checks, 60 tests, `npm run smoke`, 4 web samples, grant reviewer path. Publish: `npm login` then `npm publish --access public`. Grant apply: [docs/APPLICATION.md](docs/APPLICATION.md).
+**Shipped in v0.2.3:** 26 checks, 60 tests, `npm run smoke`, 4 web samples, grant reviewer path. Publish: `npm login` then `npm publish --access public`. Grant proposal: [docs/GRANT.md](docs/GRANT.md).
 Grant reviewer walkthrough: [token2022-guard.vercel.app/reviewer](https://token2022-guard.vercel.app/reviewer).
 
 ---

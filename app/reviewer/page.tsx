@@ -153,7 +153,6 @@ npx token2022-guard ./examples/vulnerable_hook.rs --json`}</pre>
           <p className="eyebrow mb-2">Grant · $3,000</p>
           <p className="text-sm text-[var(--ink-muted)]">
             M1 proof chain ready; npm publish is the last pre-apply step. M2 planned if approved.
-            Full proposal: docs/GRANT.md.
           </p>
         </div>
         <a
