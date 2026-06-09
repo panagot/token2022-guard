@@ -32,27 +32,6 @@ const PROOF = [
   },
 ];
 
-const MILESTONES = [
-  {
-    phase: "M1 · $1,500 · weeks 1–2",
-    items: [
-      "26 checks with unit tests (fire + pass per check)",
-      "npm publish → npx token2022-guard",
-      "BENCHMARK.md on real + pattern corpora",
-      "fee_mint_program.rs example",
-    ],
-  },
-  {
-    phase: "M2 · $1,500 · weeks 3–4",
-    items: [
-      "VS Code .vsix release",
-      ".t22guard.json config + inline suppressions",
-      "Secure transfer-hook starter template",
-      "Config + suppressions · reviewer-ready v1 polish",
-    ],
-  },
-];
-
 export default function ReviewerPage() {
   return (
     <div className="space-y-12">
@@ -119,21 +98,17 @@ export default function ReviewerPage() {
         </ul>
       </section>
 
-      <section className="space-y-4">
-        <h2 className="label">Grant milestones ($3,000)</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {MILESTONES.map((m) => (
-            <div key={m.phase} className="panel">
-              <div className="panel-inner space-y-3">
-                <h3 className="text-sm font-semibold text-[var(--accent)]">{m.phase}</h3>
-                <ul className="space-y-1 text-xs text-[var(--ink-muted)]">
-                  {m.items.map((item) => (
-                    <li key={item}>· {item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
+      <section className="panel">
+        <div className="panel-inner flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="label text-[var(--accent)]">Grant milestones ($3,000)</p>
+            <p className="mt-1 text-sm text-[var(--ink-muted)]">
+              M1 shipped vs remaining · M2 planned if approved.
+            </p>
+          </div>
+          <Link href="/milestones" className="btn btn-ghost text-[10px]">
+            M1 & M2 details →
+          </Link>
         </div>
       </section>
 
