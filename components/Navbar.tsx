@@ -19,10 +19,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav
-          className="flex max-w-[62vw] items-center gap-5 overflow-x-auto sm:max-w-none"
-          aria-label="Main"
-        >
+        <nav className="nav-links flex items-center gap-5" aria-label="Main">
           {NAV_LINKS.map((l) => {
             const active = pathname === l.href || pathname.startsWith(`${l.href}/`);
             return (

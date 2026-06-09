@@ -65,6 +65,23 @@ body {
   flex-direction: column;
 }
 
+/* Nav: allow horizontal scroll on narrow viewports without showing a scrollbar */
+.nav-links {
+  max-width: min(62vw, 100%);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nav-links::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 640px) {
+  .nav-links {
+    max-width: none;
+  }
+}
+
 .display {
   font-family: var(--font-fraunces), Georgia, serif;
   font-weight: 500;
