@@ -2,17 +2,64 @@
 
 **Pre-mainnet safety checks for Solana Token-2022 integrations.**
 
-Token-2022 is not SPL Token. Extensions such as transfer hooks, transfer fees, permanent
-delegates, and confidential transfers introduce an attack surface that auditors keep finding
-the same bugs in — missing `transferring`-state guards, hook re-entrancy, fee rounding drift,
+[![Live demo](https://img.shields.io/badge/demo-token2022--guard.vercel.app-0f766e?style=flat-square)](https://token2022-guard.vercel.app/?sample=vulnerable)
+[![Version](https://img.shields.io/badge/version-v0.2.3-92400e?style=flat-square)](https://github.com/panagot/token2022-guard/releases)
+[![Tests](https://img.shields.io/badge/tests-60_passing-166534?style=flat-square)](https://github.com/panagot/token2022-guard/actions)
+[![License](https://img.shields.io/badge/license-MIT-1e3a5f?style=flat-square)](./LICENSE)
+
+Token-2022 is not SPL Token. Extensions — transfer hooks, transfer fees, permanent delegates,
+confidential transfers, pointer metadata — introduce an attack surface auditors keep hitting
+the same way: missing `transferring`-state guards, hook re-entrancy, fee rounding drift,
 hardcoded account sizes, and more.
 
-Token2022 Guard scans your Anchor / Rust source for those footguns before you ship. One
-analysis engine powers the web UI, CLI, GitHub Action, and VS Code extension.
+Token2022 Guard scans Anchor / Rust source for those footguns **before** you ship. One analysis
+engine powers the web UI, CLI, GitHub Action, and VS Code extension.
 
-**Live demo:** [token2022-guard.vercel.app](https://token2022-guard.vercel.app)  
-**npm:** [token2022-guard](https://www.npmjs.com/package/token2022-guard) · `npx token2022-guard`  
-**License:** MIT
+| | |
+|---|---|
+| **Live demo** | [token2022-guard.vercel.app](https://token2022-guard.vercel.app/?sample=vulnerable) |
+| **Check catalog** | [token2022-guard.vercel.app/checks](https://token2022-guard.vercel.app/checks) |
+| **Guides** | [token2022-guard.vercel.app/guides](https://token2022-guard.vercel.app/guides) |
+| **CI status** | [GitHub Actions](https://github.com/panagot/token2022-guard/actions/workflows/token2022-guard.yml) |
+| **npm** | Package smoke-tested locally; publish pending — use clone + `npm run scan` below |
+
+> Static heuristics. A complement to professional audits, not a replacement.
+
+---
+
+## Try it now
+
+**No install** — open the [live demo](https://token2022-guard.vercel.app/?sample=vulnerable),
+load **Vulnerable transfer hook**, run checks, then switch to **Secure transfer hook** and watch
+findings drop to zero.
+
+**CLI (30 seconds):**
+
+```bash
+git clone https://github.com/panagot/token2022-guard.git
+cd token2022-guard
+npm install
+npm run scan -- ./examples/vulnerable_hook.rs
+```
+
+Sample output:
+
+```
+Token2022 Guard · Token-2022 safety scan
+Scanned 1 file(s)
+
+examples\vulnerable_hook.rs
+  CRITICAL T22-001 (conf: high) examples\vulnerable_hook.rs:12
+    Transfer hook missing transferring-state guard
+    fix: At the top of the hook, read the TransferHookAccount extension and reject if not
+         transferring, e.g. `assert_is_transferring(&source_account_info)?;` before any logic.
+
+  HIGH     T22-003 (conf: low)
+    ExtraAccountMetaList seeds not validated
+    fix: Build the ExtraAccountMetaList from `Seed::` derivations (PDAs) and re-derive/verify
+         those seeds inside the hook instead of trusting passed accounts.
+  ...
+```
 
 ---
 
@@ -21,67 +68,56 @@ analysis engine powers the web UI, CLI, GitHub Action, and VS Code extension.
 Teams copy SPL Token patterns into Token-2022 code and ship criticals. Recent audit write-ups
 document the same recurring issues:
 
-- Transfer hooks callable outside a real transfer (no `transferring`-state check)
-- Same-mint CPI inside a hook causing recursion / griefing
-- `ExtraAccountMetaList` accounts trusted without seed validation
-- `transfer` used instead of `transfer_checked` on fee or hooked mints
-- `calculate_fee` and `calculate_inverse_fee` mixed (off-by-one balance drift)
-- Fixed `Mint::LEN` / `space = N` on extension-bearing accounts
+| Pattern | What goes wrong |
+|---------|-----------------|
+| Hook without `transferring` guard | Hook callable outside a real transfer |
+| Same-mint CPI inside a hook | Recursion / griefing |
+| `ExtraAccountMetaList` without seed checks | Spoofed whitelist PDAs bypass logic |
+| `transfer` on fee or hooked mints | Should use `transfer_checked` |
+| `calculate_fee` vs `calculate_inverse_fee` | Off-by-one balance drift |
+| Fixed `Mint::LEN` / `space = N` | Extension-bearing accounts need realloc |
 
 Token2022 Guard flags these from source — in the editor, in CI, or in the browser.
 
-> Static heuristics. A complement to professional audits, not a replacement.
-
 ---
 
-## Quick start
+## Install & usage
 
-### Web UI
+### Web UI (local)
 
 ```bash
-git clone https://github.com/panagot/token2022-guard.git
-cd token2022-guard
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3002](http://localhost:3002). Load **Vulnerable transfer hook** to see
-findings, then **Secure transfer hook** to see them clear (0 high/critical).
+Open [http://localhost:3002](http://localhost:3002).
 
-### CLI (local or npm)
+### CLI
 
 ```bash
-# After clone
-npm run scan -- ./examples
+# Scan a directory or single file
+npm run scan -- ./programs
+npm run scan -- ./programs --fail-on=high    # exit 1 on high/critical
 
-# After npm publish (no clone) — v0.2.3+
-npx token2022-guard ./programs --fail-on=high
-
-# Verify package locally before publish
-npm run smoke
-
-# CI gate — exit 1 on high/critical
-npm run scan -- ./programs --fail-on=high
-
-# SARIF for GitHub code scanning
+# Output formats
+npm run scan -- ./programs --json
 npm run scan -- ./programs --sarif > token2022-guard.sarif
-
-# Markdown for PR comments
 npm run scan -- ./programs --md > report.md
 
-# JSON
-npm run scan -- ./programs --json
+# Filter checks
+npm run scan -- ./programs --only=T22-001,T22-002
+npm run scan -- ./programs --except=T22-007
 ```
 
 **Flags:** `--format=table|json|sarif|markdown`, `--fail-on=<severity>`,
-`--only=T22-001,T22-002`, `--except=T22-007`, `--no-color`, `--version`, `--help`.
+`--only`, `--except`, `--no-color`, `--version`, `--help`.
+
+After `npm publish` (maintainers): `npx token2022-guard ./programs --fail-on=high`.
 
 ### VS Code
 
 ```bash
-cd vscode-extension
-npm install
-npm run build
+cd vscode-extension && npm install && npm run build
 ```
 
 Press **F5** to launch an Extension Development Host. Open `examples/vulnerable_hook.rs` —
@@ -89,7 +125,14 @@ findings appear as inline diagnostics with hover remediation and spec links.
 
 ---
 
-## What it checks (26)
+## What it checks
+
+**26 checks** (T22-001 → T22-026) · **60 unit tests** · each finding includes severity,
+confidence, line (when detectable), remediation, and a link to the
+[Token-2022 extensions spec](https://spl.solana.com/token-2022/extensions).
+
+<details>
+<summary><strong>Full catalog</strong> — also browsable at <a href="https://token2022-guard.vercel.app/checks">/checks</a></summary>
 
 | ID | Severity | Issue |
 |----|----------|-------|
@@ -120,14 +163,13 @@ findings appear as inline diagnostics with hover remediation and spec links.
 | T22-025 | medium | Mint authority not re-checked after CPI |
 | T22-026 | low | Account frozen state not checked before transfer |
 
-Each finding includes severity, confidence, the offending line (when detectable), a
-remediation, and a link to the [Token-2022 extensions spec](https://spl.solana.com/token-2022/extensions).
+</details>
 
-Full catalog with summaries: [token2022-guard.vercel.app/checks](https://token2022-guard.vercel.app/checks).
+**Severity breakdown:** 1 critical · 8 high · 13 medium · 4 low
 
 ---
 
-## Bundled examples
+## Examples
 
 | File | Findings (approx.) | Purpose |
 |------|-------------------|---------|
@@ -140,56 +182,64 @@ Full catalog with summaries: [token2022-guard.vercel.app/checks](https://token20
 npm run scan:examples
 ```
 
----
-
-## Tests & benchmark
-
-```bash
-npm test              # 60 tests — fire + pass per check + integration examples
-npm run smoke         # pack + fresh install CLI verification
-npm run benchmark     # corpus scan → benchmark/results.json
-```
-
-See [BENCHMARK.md](./BENCHMARK.md) for false-positive notes and corpus results.
+The web UI loads the same samples — useful for demos and reviewer walkthroughs.
 
 ---
 
 ## CI / GitHub Action
 
-`.github/workflows/token2022-guard.yml` runs on every push and PR:
+This repo runs on every push and PR ([workflow](.github/workflows/token2022-guard.yml)):
 
-1. Runs unit tests (`npm test`)
-2. Scans `./examples` and fails on high/critical findings
-3. Uploads SARIF to the repository **Security** tab
+1. Unit tests (`npm test`)
+2. Scan `./examples`, fail on high/critical
+3. Upload SARIF to the **Security** tab
 
-Copy the workflow into your own repo and point the scan path at your `programs/` directory.
+**Drop into your repo** — copy `.github/workflows/token2022-guard.yml` and change the scan path:
+
+```yaml
+- uses: actions/checkout@v4
+- uses: actions/setup-node@v4
+  with:
+    node-version: 22
+- run: npm ci
+- run: npm test
+- run: npm run scan -- ./programs --fail-on=high
+- run: npx tsx cli/index.ts ./programs --sarif > token2022-guard.sarif
+  if: always()
+- uses: github/codeql-action/upload-sarif@v4
+  if: always()
+  with:
+    sarif_file: token2022-guard.sarif
+```
+
+Point `npm ci` at a checkout of this repo, or vendor the `lib/` + `cli/` package once npm is published.
+
+---
+
+## Tests & benchmark
+
+```bash
+npm test              # 60 tests — per-check fixtures + integration examples
+npm run smoke         # pack + fresh-install CLI verification (pre-publish)
+npm run benchmark     # corpus scan → benchmark/results.json
+```
+
+See [BENCHMARK.md](./BENCHMARK.md) for false-positive notes. `examples/secure_hook.rs` is the
+negative control — **0 findings** across all 26 checks.
 
 ---
 
 ## Architecture
 
 ```
-lib/          Shared analysis engine (analyze(source))
-cli/          Terminal interface + JSON / SARIF / Markdown
-app/          Next.js web UI
-examples/     Reference Anchor programs
-vscode-extension/   Inline diagnostics (same engine)
+lib/                 Shared analysis engine (analyze(source))
+cli/                 Terminal interface + JSON / SARIF / Markdown
+app/                 Next.js web UI
+examples/            Reference Anchor programs
+vscode-extension/    Inline diagnostics (same engine)
 ```
 
-No duplicated logic — the web UI, CLI, GitHub Action, and VS Code extension all call
-`lib/analyzer.ts`.
-
----
-
-## Deploy to Vercel
-
-1. Import [github.com/panagot/token2022-guard](https://github.com/panagot/token2022-guard) in Vercel
-2. Framework preset: **Next.js** (auto-detected)
-3. Build command: `npm run build`
-4. Output: default (`.next`)
-5. Deploy
-
-No environment variables required for the web UI.
+No duplicated logic — every surface calls `lib/analyzer.ts`.
 
 ---
 
@@ -197,22 +247,22 @@ No environment variables required for the web UI.
 
 - **Static heuristics** — pattern-based detection, not a full AST or runtime analysis
 - **False positives / negatives** — tune with `--only` / `--except` until config files ship
-- **Token-2022 focus** — does not replace general Anchor linters (see [Anchor Security Prep](https://github.com/panagot/Anchor-Security-Prep) for that)
+- **Token-2022 focus** — does not replace general Anchor linters (see [Anchor Security Prep](https://github.com/panagot/Anchor-Security-Prep))
 - **Not an audit** — use alongside professional review before mainnet
 
 ---
 
 ## Roadmap
 
-See [ROADMAP.md](./ROADMAP.md):
+See [ROADMAP.md](./ROADMAP.md) for the full plan. Highlights:
 
 - Expand toward 30+ checks (extension init, realloc, withheld-fee harvest)
-- Config files, baselines, inline suppressions (M2)
+- Config files, baselines, inline suppressions
 - VS Code quick-fixes and Marketplace publish
+- `npx token2022-guard` on npm
 - Secure transfer-hook template + Mollusk/LiteSVM test harness
 
-**Shipped in v0.2.3:** 26 checks, 60 tests, `npm run smoke`, 4 web samples, grant reviewer path. Publish: `npm login` then `npm publish --access public`. Grant proposal: [docs/GRANT.md](docs/GRANT.md).
-Grant reviewer walkthrough: [token2022-guard.vercel.app/reviewer](https://token2022-guard.vercel.app/reviewer).
+**v0.2.3:** 26 checks, 60 tests, 4 web samples, SARIF CI, grant reviewer path at [/reviewer](https://token2022-guard.vercel.app/reviewer).
 
 ---
 
