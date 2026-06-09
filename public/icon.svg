@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="4" fill="#07090b"/>
+  <rect x="3" y="3" width="26" height="26" rx="2" stroke="#22d3ee" stroke-width="2"/>
+  <path d="M10 22 V10 H22 V22 Z" stroke="#22d3ee" stroke-width="1.5" fill="rgba(34,211,238,0.12)"/>
+  <text x="16" y="19" font-family="ui-monospace, monospace" font-size="5.5" font-weight="700" fill="#22d3ee" text-anchor="middle">T22</text>
+</svg>

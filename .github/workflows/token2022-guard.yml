@@ -1,0 +1,35 @@
+name: Token2022 Guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  token2022-safety:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install
+        run: npm ci
+
+      - name: Token2022 Guard scan
+        run: npm run scan -- ./examples --fail-on=high
+
+      - name: Generate SARIF
+        if: always()
+        run: npm run scan -- ./examples --sarif > token2022-guard.sarif
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: token2022-guard.sarif

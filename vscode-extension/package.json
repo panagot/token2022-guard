@@ -1,0 +1,43 @@
+{
+  "name": "t22-guard-vscode",
+  "displayName": "T22 Guard — Token-2022 Safety",
+  "description": "Inline Token-2022 integration safety diagnostics for Anchor / Rust programs.",
+  "version": "0.1.0",
+  "publisher": "panagot",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Linters", "Programming Languages"],
+  "activationEvents": ["onLanguage:rust"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "t22guard.scanActiveFile",
+        "title": "T22 Guard: Scan Active File"
+      }
+    ],
+    "configuration": {
+      "title": "T22 Guard",
+      "properties": {
+        "t22guard.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable T22 Guard diagnostics."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --target=node18 --external:vscode --format=cjs --outfile=dist/extension.js",
+    "watch": "npm run build -- --watch",
+    "vscode:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5"
+  }
+}
