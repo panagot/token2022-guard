@@ -404,8 +404,8 @@ npm run scan -- ./programs/transfer-hook --only=T22-001,T22-002,T22-003`,
     summary:
       "Use the published npm package in CI without cloning the Token2022 Guard monorepo.",
     relatedChecks: [],
-    ctaHref: "/milestones",
-    ctaLabel: "M1 milestones",
+    ctaHref: "/guides/cli-quickstart",
+    ctaLabel: "CLI quickstart",
     sections: [
       {
         paragraphs: [

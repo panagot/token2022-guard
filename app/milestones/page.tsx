@@ -91,9 +91,12 @@ export default function MilestonesPage() {
           </div>
         </div>
         <p className="text-xs text-[var(--ink-faint)]">
-          Most of M1 is already in the repo and live. The remaining items are publish + one more
-          integration example so extension checks (T22-018–023) show up in the benchmark corpus, not
-          only in unit fixtures.
+          M1 is complete when npm publish is live and CI SARIF upload passes. Verify with{" "}
+          <code className="text-[var(--accent)]">npm run smoke</code> and the{" "}
+          <a href={SITE.actions} className="nav-link" target="_blank" rel="noreferrer">
+            GitHub Actions workflow
+          </a>
+          .
         </p>
       </section>
 

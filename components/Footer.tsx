@@ -42,6 +42,9 @@ export function Footer() {
               <a href={SITE.github} className="nav-link w-fit" target="_blank" rel="noreferrer">
                 GitHub
               </a>
+              <a href={SITE.npm} className="nav-link w-fit" target="_blank" rel="noreferrer">
+                npm
+              </a>
               <Link href="/use-cases" className="nav-link w-fit">
                 Use cases
               </Link>

@@ -1,22 +1,29 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-
-import type { Sample } from "@/lib/samples";
-
 import { Analyzer } from "./Analyzer";
+import { loadExampleSample } from "@/lib/load-samples";
 
-function extensionsSample(): Sample {
-  const source = readFileSync(join(process.cwd(), "examples", "extensions_program.rs"), "utf8");
-  return {
-    id: "extensions",
-    label: "Bad extension wiring",
-    tag: "12+ findings",
-    description:
-      "Pointer extensions without validation, transfer-fee epoch drift, pausable mint transfers, and mint authority used after CPI.",
-    source,
-  };
-}
+export const metadata = {
+  title: "Analyzer",
+  description:
+    "Run 26 Token-2022 safety checks on Anchor/Rust source. Load vulnerable, secure, fee, or extension samples.",
+};
 
 export default function Home() {
-  return <Analyzer extraSamples={[extensionsSample()]} />;
+  const extraSamples = [
+    loadExampleSample(
+      "extensions",
+      "Bad extension wiring",
+      "13 findings",
+      "Pointer extensions without validation, transfer-fee epoch drift, pausable mint transfers, and mint authority used after CPI.",
+      "extensions_program.rs",
+    ),
+    loadExampleSample(
+      "fee_mint",
+      "Bad fee mint vault",
+      "11 findings",
+      "SPL-only wiring, deprecated transfer, mixed fee math, and missing vault hardening on a fee mint deposit.",
+      "fee_mint_program.rs",
+    ),
+  ];
+
+  return <Analyzer extraSamples={extraSamples} />;
 }

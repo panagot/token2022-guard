@@ -56,7 +56,7 @@ Each shipped check has: vulnerable + secure fixtures, unit tests (fire + pass), 
 - Check filtering: `--only=`, `--except=`
 - `--no-color`, `--version`, `--help`
 - **npm package** → `npx token2022-guard ./programs` (v0.2.0)
-- **Unit tests** — `npm test` (59 tests, Vitest, per-check fixtures)
+- **Unit tests** — `npm test` (60 tests, Vitest, per-check fixtures)
 - **Benchmark** — `npm run benchmark` → [BENCHMARK.md](./BENCHMARK.md)
 
 ### Planned (M2)

@@ -11,6 +11,7 @@ Token2022 Guard scans your Anchor / Rust source for those footguns before you sh
 analysis engine powers the web UI, CLI, GitHub Action, and VS Code extension.
 
 **Live demo:** [token2022-guard.vercel.app](https://token2022-guard.vercel.app)  
+**npm:** [token2022-guard](https://www.npmjs.com/package/token2022-guard) · `npx token2022-guard`  
 **License:** MIT
 
 ---

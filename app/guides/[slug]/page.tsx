@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { GuideText } from "@/components/GuideText";
 import { PageHeader } from "@/components/PageHeader";
 import { GUIDE_CONTENT } from "@/lib/guide-content";
 import { GUIDES } from "@/lib/guides";
@@ -45,20 +46,24 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             )}
             {section.paragraphs?.map((p, j) => (
               <p key={j} className="text-sm leading-relaxed text-[var(--ink-muted)]">
-                {p}
+                <GuideText text={p} />
               </p>
             ))}
             {section.bullets && (
               <ul className="list-inside list-disc space-y-2 text-sm text-[var(--ink-muted)]">
                 {section.bullets.map((b, k) => (
-                  <li key={k}>{b}</li>
+                  <li key={k}>
+                    <GuideText text={b} />
+                  </li>
                 ))}
               </ul>
             )}
             {section.numbered && (
               <ol className="list-inside list-decimal space-y-2 text-sm text-[var(--ink-muted)]">
                 {section.numbered.map((n, k) => (
-                  <li key={k} className="pl-1">{n}</li>
+                  <li key={k} className="pl-1">
+                    <GuideText text={n} />
+                  </li>
                 ))}
               </ol>
             )}
