@@ -53,8 +53,11 @@ findings, then **Secure transfer hook** to see them clear (0 high/critical).
 # After clone
 npm run scan -- ./examples
 
-# After npm publish (no clone)
+# After npm publish (no clone) — v0.2.1+
 npx token2022-guard ./programs --fail-on=high
+
+# Verify package locally before publish
+npm run smoke
 
 # CI gate — exit 1 on high/critical
 npm run scan -- ./programs --fail-on=high
@@ -130,6 +133,7 @@ Full catalog with summaries: [token2022-guard.vercel.app/checks](https://token20
 | `examples/vulnerable_hook.rs` | 16 (1 critical, 6 high) | Intentionally bad transfer-hook + deposit patterns |
 | `examples/secure_hook.rs` | 0 | Audit-derived guards: transferring assertion, PDA whitelist, `token_interface`, fallback dispatcher |
 | `examples/fee_mint_program.rs` | 11 (3 high) | Bad fee handling + SPL Token wiring on a deposit vault |
+| `examples/extensions_program.rs` | 13 (2 high) | Pointer, fee-epoch, pausable, and post-CPI authority bugs |
 
 ```bash
 npm run scan:examples
@@ -140,7 +144,8 @@ npm run scan:examples
 ## Tests & benchmark
 
 ```bash
-npm test              # 59 tests — fire + pass per check + integration examples
+npm test              # 60 tests — fire + pass per check + integration examples
+npm run smoke         # pack + fresh install CLI verification
 npm run benchmark     # corpus scan → benchmark/results.json
 ```
 
@@ -205,7 +210,7 @@ See [ROADMAP.md](./ROADMAP.md):
 - VS Code quick-fixes and Marketplace publish
 - Secure transfer-hook template + Mollusk/LiteSVM test harness
 
-**Shipped in v0.2.0:** 26 checks (T22-001 → T22-026), 59 unit tests, `npx token2022-guard`, [BENCHMARK.md](./BENCHMARK.md).
+**Shipped in v0.2.1:** 26 checks, 60 tests, `npm run smoke`, extensions example, slim npm package. Publish: `npm publish --access public`.
 Grant reviewer walkthrough: [token2022-guard.vercel.app/reviewer](https://token2022-guard.vercel.app/reviewer).
 
 ---

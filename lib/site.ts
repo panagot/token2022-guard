@@ -3,7 +3,7 @@ export const SITE = {
   tagline: "Token-2022 integration safety",
   github: "https://github.com/panagot/token2022-guard",
   spec: "https://spl.solana.com/token-2022/extensions",
-  version: "v0.2.0",
+  version: "v0.2.1",
 } as const;
 
 export const NAV_LINKS = [

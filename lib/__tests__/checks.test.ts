@@ -18,6 +18,7 @@ describe("integration examples", () => {
   const vulnerable = readExample("vulnerable_hook.rs");
   const secure = readExample("secure_hook.rs");
   const feeMint = readExample("fee_mint_program.rs");
+  const extensions = readExample("extensions_program.rs");
 
   it("vulnerable_hook triggers critical T22-001", () => {
     expect(hasCheck(vulnerable, "T22-001")).toBe(true);
@@ -41,6 +42,18 @@ describe("integration examples", () => {
     expect(ids.has("T22-004")).toBe(true);
     expect(ids.has("T22-005")).toBe(true);
     expect(ids.has("T22-006")).toBe(true);
+  });
+
+  it("extensions_program triggers pointer, fee epoch, and pause checks", () => {
+    const r = analyze(extensions);
+    const ids = new Set(r.findings.map((f) => f.checkId));
+    expect(ids.has("T22-018")).toBe(true);
+    expect(ids.has("T22-019")).toBe(true);
+    expect(ids.has("T22-020")).toBe(true);
+    expect(ids.has("T22-021")).toBe(true);
+    expect(ids.has("T22-023")).toBe(true);
+    expect(ids.has("T22-025")).toBe(true);
+    expect(r.total).toBeGreaterThanOrEqual(10);
   });
 });
 

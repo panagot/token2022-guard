@@ -767,10 +767,11 @@ const checks: Check[] = [
 
   // T22-025 — mint authority after CPI
   (ctx) => {
-    const doesCpi = has(ctx.source, /CpiContext::new|invoke\(|invoke_signed/);
-    const touchesMintAuth = has(ctx.source, /mint_authority|set_authority|MintAuthority/);
+    const code = codeLines(ctx.lines).join("\n");
+    const doesCpi = has(code, /CpiContext::new|invoke\(|invoke_signed/);
+    const touchesMintAuth = has(code, /mint_authority|set_authority|MintAuthority/);
     if (!doesCpi || !touchesMintAuth) return [];
-    if (has(ctx.source, /reload|account_info\.reload|refresh.*mint|verify_mint_authority|revalidate/i)) return [];
+    if (has(code, /reload|account_info\.reload|refresh.*mint|verify_mint_authority|revalidate/i)) return [];
     const anchor = scan(codeLines(ctx.lines), { test: (s) => /mint_authority|set_authority/.test(s) });
     return [
       finding(

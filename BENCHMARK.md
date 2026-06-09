@@ -1,26 +1,27 @@
 # Token2022 Guard — Benchmark
 
 **Generated:** 2026-06-09  
-**Engine:** v0.2.0 · 26 checks  
+**Engine:** v0.2.1 · 26 checks  
 **Command:** `npm run benchmark` → writes `benchmark/results.json`
 
 This benchmark measures **detection on intentional bad patterns** and **false positives on secure
 fixtures**. It is not a claim of 100% recall on mainnet code — static heuristics will miss novel
 bugs and may flag style-only differences.
 
-## Corpus
+## Corpus (6 files)
 
 | File | Role | Findings | High+ |
 |------|------|----------|-------|
 | `examples/vulnerable_hook.rs` | Intentionally bad hook + deposit | 16 | 7 (1 critical) |
 | `examples/secure_hook.rs` | Audit-derived guards | **0** | **0** |
 | `examples/fee_mint_program.rs` | Bad fee / SPL wiring | 11 | 3 |
+| `examples/extensions_program.rs` | Bad pointers, fee epoch, pause, CPI auth | 13 | 2 |
 | `benchmark/external/hook_without_guard.rs` | Minimal hook, no transferring guard | 3 | 2 (1 critical) |
 | `benchmark/external/spl_style_vault.rs` | SPL Token vault (no Token-2022) | 9 | 3 |
 
 ## Negative control (false positives)
 
-`examples/secure_hook.rs` is the primary **false-positive benchmark**. It implements:
+`examples/secure_hook.rs` is the primary **false-positive benchmark**:
 
 - `assert_is_transferring` guard (T22-001)
 - PDA whitelist with `require_keys_eq!` (T22-017)
@@ -29,68 +30,52 @@ bugs and may flag style-only differences.
 
 **Result: 0 findings** across all **26** checks.
 
-## Detection highlights
+## Extension example (`extensions_program.rs`)
 
-### Transfer hooks (`vulnerable_hook.rs`, `hook_without_guard.rs`)
+New in v0.2.1 — exercises checks that only appeared in unit fixtures before:
 
-| Check | vulnerable_hook | hook_without_guard |
-|-------|-----------------|-------------------|
-| T22-001 transferring guard | ✓ | ✓ |
-| T22-002 re-entrancy | ✓ | — |
-| T22-003 ExtraAccountMeta seeds | ✓ | — |
-| T22-012 fallback dispatcher | ✓ | ✓ |
-| T22-017 extra account owner | — | ✓ |
-| T22-022 non-transferable | ✓ | — |
-| T22-026 frozen state | ✓ | — |
+| Check | Triggered |
+|-------|-----------|
+| T22-018 group/member pointer | ✓ |
+| T22-019 metadata pointer | ✓ |
+| T22-020 scaled UI amount | ✓ |
+| T22-021 transfer fee epoch | ✓ |
+| T22-023 pausable | ✓ |
+| T22-025 mint authority after CPI | ✓ |
+| T22-005, T22-022, T22-026 transfers | ✓ |
 
-### Vault / deposit patterns (`spl_style_vault.rs`, `fee_mint_program.rs`)
+## Vault / deposit patterns
 
-| Check | spl_style_vault | fee_mint_program |
-|-------|-----------------|------------------|
-| T22-004 SPL-only wiring | ✓ | ✓ |
-| T22-005 deprecated transfer | ✓ | ✓ |
-| T22-007 permanent delegate | ✓ | ✓ |
-| T22-009 hardcoded size | ✓ | ✓ |
-| T22-010 CPI Guard | ✓ | ✓ |
-| T22-011 ImmutableOwner | ✓ | ✓ |
-| T22-016 mint close authority | ✓ | ✓ |
-| T22-006 fee handling | — | ✓ |
-| T22-022 non-transferable | ✓ | ✓ |
-| T22-026 frozen state | ✓ | ✓ |
+| Check | fee_mint | spl_style_vault | extensions |
+|-------|----------|-----------------|------------|
+| T22-004 SPL-only | ✓ | ✓ | — |
+| T22-010 CPI Guard | ✓ | ✓ | ✓ |
+| T22-016 close authority | ✓ | ✓ | ✓ |
+| T22-022 non-transferable | ✓ | ✓ | ✓ |
+| T22-026 frozen state | ✓ | ✓ | ✓ |
 
-### New extension checks (v0.2.0)
-
-T22-018 → T22-026 are covered by **per-check unit fixtures** (`lib/fixtures.ts`). Integration
-examples above exercise the highest-traffic subset (transfers, fees, vault custody). Pointer,
-pausable, and epoch-fee checks fire on isolated bad snippets and will appear in corpus files as
-we add extension-specific examples.
-
-## Known limitations (honest FP/FN notes)
-
-1. **Regex heuristics** — checks look for patterns, not full AST. Refactors that preserve unsafe
-   behavior but rename symbols may evade detection.
-2. **T22-022 / T22-026** — fire on any program that transfers without extension/state guards.
-   Legitimate internal tools may need `--except` until M2 config ships.
-3. **T22-021** — requires `TransferFee` in source; programs using only `transfer_checked_with_fee`
-   without explicit fee config may not trigger.
-4. **External corpus** — `benchmark/external/` holds minimal pattern snippets, not cloned repos.
-
-## Unit test gate
-
-Every shipped check has an isolated **bad** and **good** fixture in `lib/fixtures.ts`, asserted
-in `lib/__tests__/checks.test.ts`:
+## Unit test + smoke gates
 
 ```bash
-npm test   # 59 tests — fire + pass per check + integration examples
+npm test    # 60 tests — fixtures + integration examples
+npm run smoke   # npm pack → fresh install → npx token2022-guard scan
 ```
 
 CI runs `npm test` before the example scan (see `.github/workflows/token2022-guard.yml`).
+
+## Known limitations
+
+1. **Regex heuristics** — pattern-based, not AST. Novel refactorings may evade checks.
+2. **T22-022 / T22-026** — fire on any `token::transfer` without guards; tune with `--except` until M2 config.
+3. **T22-025** — now code-aware (comments mentioning `reload` no longer suppress the check).
+4. **External corpus** — minimal snippets from audit patterns, not full cloned repos.
 
 ## Reproduce
 
 ```bash
 npm install
 npm test
+npm run smoke
 npm run benchmark
 npm run scan -- ./examples --fail-on=high
 ```

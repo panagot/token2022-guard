@@ -1,6 +1,31 @@
 {
-  "generated": "2026-06-09T11:12:42.388Z",
+  "generated": "2026-06-09T11:19:38.913Z",
   "results": [
+    {
+      "path": "examples/extensions_program.rs",
+      "total": 13,
+      "summary": {
+        "critical": 0,
+        "high": 2,
+        "medium": 9,
+        "low": 2
+      },
+      "checks": [
+        "T22-005",
+        "T22-007",
+        "T22-010",
+        "T22-011",
+        "T22-016",
+        "T22-018",
+        "T22-019",
+        "T22-020",
+        "T22-021",
+        "T22-022",
+        "T22-023",
+        "T22-025",
+        "T22-026"
+      ]
+    },
     {
       "path": "examples/fee_mint_program.rs",
       "total": 11,

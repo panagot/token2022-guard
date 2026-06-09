@@ -1,6 +1,6 @@
 {
   "name": "token2022-guard",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Pre-mainnet safety checks for Solana Token-2022 integrations. CLI, VS Code, SARIF.",
   "license": "MIT",
   "author": "panagot",
@@ -41,15 +41,22 @@
     "scan": "tsx cli/index.ts",
     "scan:examples": "tsx cli/index.ts ./examples",
     "benchmark": "node scripts/benchmark.mjs",
-    "prepublishOnly": "npm run test"
+    "smoke": "node scripts/smoke-test.mjs",
+    "prepublishOnly": "npm run test && npm run smoke"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.18",
     "tsx": "^4.19.2"
   },
   "devDependencies": {
+    "next": "15.5.18",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^19",

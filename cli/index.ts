@@ -1,14 +1,18 @@
 #!/usr/bin/env node
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join, relative } from "node:path";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { dirname, join, relative } from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 
 import { analyze } from "../lib/analyzer";
 import { toSarif, type FileFindings } from "../lib/sarif";
 import { toMarkdown } from "../lib/markdown";
 import type { Severity } from "../lib/types";
 
-const VERSION = "0.1.0";
+const PKG_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const VERSION: string = JSON.parse(
+  readFileSync(join(PKG_ROOT, "package.json"), "utf8"),
+).version;
 type Format = "table" | "json" | "sarif" | "markdown";
 
 const SEVERITY_RANK: Record<Severity, number> = { critical: 4, high: 3, medium: 2, low: 1 };

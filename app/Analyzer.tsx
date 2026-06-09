@@ -6,33 +6,39 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { analyze, highSeverityCount } from "@/lib/analyzer";
 import { CHECKS } from "@/lib/checks";
-import { SAMPLES, SAMPLE_BY_ID } from "@/lib/samples";
+import { SAMPLES, type Sample } from "@/lib/samples";
 import type { Severity } from "@/lib/types";
 
 const SEVERITIES: Severity[] = ["critical", "high", "medium", "low"];
 
-function AnalyzerInner() {
+function AnalyzerInner({ extraSamples = [] }: { extraSamples?: Sample[] }) {
+  const allSamples = useMemo(() => [...SAMPLES, ...extraSamples], [extraSamples]);
+  const sampleById = useMemo(
+    () => Object.fromEntries(allSamples.map((s) => [s.id, s])),
+    [allSamples],
+  );
+
   const searchParams = useSearchParams();
   const sampleParam = searchParams.get("sample");
   const initialSample =
-    sampleParam && SAMPLE_BY_ID[sampleParam] ? sampleParam : "vulnerable";
+    sampleParam && sampleById[sampleParam] ? sampleParam : "vulnerable";
 
   const [activeSample, setActiveSample] = useState(initialSample);
-  const [source, setSource] = useState(SAMPLE_BY_ID[initialSample].source);
+  const [source, setSource] = useState(sampleById[initialSample].source);
 
   useEffect(() => {
-    if (sampleParam && SAMPLE_BY_ID[sampleParam]) {
+    if (sampleParam && sampleById[sampleParam]) {
       setActiveSample(sampleParam);
-      setSource(SAMPLE_BY_ID[sampleParam].source);
+      setSource(sampleById[sampleParam].source);
     }
-  }, [sampleParam]);
+  }, [sampleParam, sampleById]);
 
   const result = useMemo(() => analyze(source), [source]);
   const highCrit = highSeverityCount(result);
 
   function loadSample(id: string) {
     setActiveSample(id);
-    setSource(SAMPLE_BY_ID[id].source);
+    setSource(sampleById[id].source);
   }
 
   function onEdit(value: string) {
@@ -56,7 +62,7 @@ function AnalyzerInner() {
           account sizing.
         </p>
         <div className="flex flex-wrap items-center gap-2">
-          {SAMPLES.map((s) => (
+          {allSamples.map((s) => (
             <button
               key={s.id}
               type="button"
@@ -180,10 +186,10 @@ function AnalyzerInner() {
   );
 }
 
-export function Analyzer() {
+export function Analyzer({ extraSamples }: { extraSamples?: Sample[] }) {
   return (
     <Suspense fallback={<div className="panel animate-pulse"><div className="panel-inner h-64" /></div>}>
-      <AnalyzerInner />
+      <AnalyzerInner extraSamples={extraSamples} />
     </Suspense>
   );
 }
